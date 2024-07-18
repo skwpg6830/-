@@ -14,9 +14,8 @@ export default {
 .footer-content {
   padding: 1em;
   text-align: center;
-  background-color: #303133;
-  color: white;
-  height: 64px; /* Adjust height */
+  background-color: transparent;
+  color: #ff372e;
 }
 
 /* PC版樣式 */

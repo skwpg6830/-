@@ -15,9 +15,9 @@
       :ellipsis="false"
       @select="handleSelect"
     >
-      <el-menu-item index="1">面臨現狀</el-menu-item>
-      <el-menu-item index="2">對策</el-menu-item>
-      <el-menu-item index="3">交流專區</el-menu-item>
+      <el-menu-item index="1"><a href="#a1">面臨現狀</a></el-menu-item>
+      <el-menu-item index="2"><a href="#a2">對策</a></el-menu-item>
+      <el-menu-item index="3"><a href="#a3">交流專區</a></el-menu-item>
       <el-menu-item index="4">關於我們</el-menu-item>
       <div class="flex-grow"></div>
       <el-menu-item index="5">註冊</el-menu-item>
