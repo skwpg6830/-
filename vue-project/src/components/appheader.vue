@@ -1,11 +1,13 @@
 <template>
   <el-header>
-    <el-row>
-      <el-col :span="18">
+    <el-row :gutter="30" align="middle">
+      <el-col :span="20" :lg="24" :xs="28">
         <h1><a href="#">生態永續</a></h1>
       </el-col>
-      <el-col :span="6" class="menu-toggle" @click="toggleMenu">
-        <i class="el-icon-menu"></i>
+      <el-col :span="4" :xs="2" class="menu-toggle-col">
+        <el-icon class="menu-toggle" @click="toggleMenu">
+          <MenuIcon />
+        </el-icon>
       </el-col>
     </el-row>
     <el-menu
@@ -15,13 +17,17 @@
       :ellipsis="false"
       @select="handleSelect"
     >
-      <el-menu-item index="1"><a href="#a1">面臨現狀</a></el-menu-item>
-      <el-menu-item index="2"><a href="#a2">對策</a></el-menu-item>
-      <el-menu-item index="3"><a href="#a3">交流專區</a></el-menu-item>
-      <el-menu-item index="4"><a href="#a4">關於我們</a></el-menu-item>
+      <el-menu-item index="1"><a href="#a1" class="red-text">面臨現狀</a></el-menu-item>
+      <el-menu-item index="2"><a href="#a2" class="red-text">對策</a></el-menu-item>
+      <el-menu-item index="3"><a href="#a3" class="red-text">交流專區</a></el-menu-item>
+      <el-menu-item index="4"><a href="#a4" class="red-text">關於我們</a></el-menu-item>
       <div class="flex-grow"></div>
-      <el-menu-item index="5" @click="showRegisterDialog = true">註冊</el-menu-item>
-      <el-menu-item index="6" @click="showLoginDialog = true">登入</el-menu-item>
+      <el-menu-item index="5" @click="showRegisterDialog = true"
+        ><a class="red-text">註冊</a></el-menu-item
+      >
+      <el-menu-item index="6" @click="showLoginDialog = true"
+        ><a class="red-text">登入</a></el-menu-item
+      >
     </el-menu>
     <!-- 註冊彈窗 -->
     <el-dialog v-model="showRegisterDialog" title="註冊" style="text-align: center">
@@ -79,8 +85,13 @@
 </template>
 
 <script>
+import { Menu as MenuIcon } from '@element-plus/icons-vue'
+
 export default {
   name: 'AppHeader',
+  components: {
+    MenuIcon
+  },
   data() {
     return {
       activeIndex: '1',
@@ -134,23 +145,21 @@ export default {
 <style scoped>
 a {
   text-decoration: none;
-  color: white;
+  color: #03a9f4;
 }
+
 .el-header {
-  padding: 0;
   background-color: #2ed64b;
-  color: white;
   height: 64px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-evenly;
 }
 
 .menu-toggle {
   display: none;
-  justify-content: flex-end;
   cursor: pointer;
-  padding: 0 15px;
+  color: #03a9f4; /* 更改此處以改變圖標顏色 */
 }
 
 .el-menu-demo {
@@ -166,6 +175,11 @@ a {
   flex-direction: column;
 }
 
+.red-text {
+  color: #ff372e !important; /* 設置字體顏色為紅色 */
+  font-weight: bold;
+}
+
 .flex-grow {
   flex: 1;
   display: flex;
@@ -173,10 +187,14 @@ a {
 }
 
 @media (max-width: 768px) {
+  .el-header {
+    background-color: #2ed64b;
+    height: 64px;
+    display: block;
+  }
+
   .menu-toggle {
     display: block;
-    background-color: white;
-    width: 100px;
     font-size: 24px;
   }
 
@@ -191,6 +209,10 @@ a {
 
   .flex-grow {
     display: none;
+  }
+
+  .menu-toggle-col {
+    justify-content: flex-end;
   }
 }
 

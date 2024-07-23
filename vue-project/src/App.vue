@@ -24,12 +24,14 @@ export default {
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=LXGW+WenKai+Mono+TC&display=swap');
 body,
 html,
 #app {
   height: 100%;
   margin: 0;
   background-color: #e1f5fe;
+  font-family: 'LXGW WenKai Mono TC', monospace;
 }
 
 .container {

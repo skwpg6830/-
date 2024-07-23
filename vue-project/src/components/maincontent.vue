@@ -282,6 +282,12 @@ export default {
 }
 </script>
 
+<script setup>
+import { ref } from 'vue'
+
+const activeName = ref('1') // 默认展开第一项
+</script>
+
 <style scoped>
 h2 {
   text-align: center;
@@ -318,32 +324,32 @@ img {
 }
 
 .el-carousel__item:nth-child(1) {
-  background: url('../assets/福壽螺.png') no-repeat bottom;
+  background: url('../assets/福壽螺.png') no-repeat center;
   background-size: 100% 50%;
 }
 
 .el-carousel__item:nth-child(2) {
-  background: url('../assets/入侵紅火蟻.png') no-repeat bottom;
+  background: url('../assets/入侵紅火蟻.png') no-repeat center;
   background-size: 100% 50%;
 }
 
 .el-carousel__item:nth-child(3) {
-  background: url('../assets/中國梨木蝨.png') no-repeat bottom;
+  background: url('../assets/中國梨木蝨.png') no-repeat center;
   background-size: 100% 50%;
 }
 
 .el-carousel__item:nth-child(4) {
-  background: url('../assets/河殼菜蛤.png') no-repeat bottom;
+  background: url('../assets/河殼菜蛤.png') no-repeat center;
   background-size: 100% 50%;
 }
 
 .el-carousel__item:nth-child(5) {
-  background: url('../assets/緬甸小鼠.png') no-repeat bottom;
+  background: url('../assets/緬甸小鼠.png') no-repeat center;
   background-size: 100% 50%;
 }
 
 .el-carousel__item:nth-child(6) {
-  background: url('../assets/多線南蜥.png') no-repeat bottom;
+  background: url('../assets/多線南蜥.png') no-repeat center;
   background-size: 100% 50%;
 }
 
@@ -367,7 +373,7 @@ img {
     max-width: 100%;
     height: 200%;
     position: absolute;
-    top: -100%;
+    top: -50%;
   }
 }
 </style>

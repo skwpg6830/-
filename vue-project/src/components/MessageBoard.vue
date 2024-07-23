@@ -2,7 +2,7 @@
   <div>
     <el-form :model="form" @submit.prevent="handleSubmit">
       <el-form-item>
-        <el-input v-model="form.name" placeholder="您討論的主題" />
+        <el-input v-model="form.name" placeholder="討論的主題" />
       </el-form-item>
       <el-form-item>
         <el-input type="textarea" v-model="form.message" placeholder="請輸入訊息" rows="4" />
