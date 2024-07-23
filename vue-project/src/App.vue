@@ -35,7 +35,7 @@ html,
 .container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* 确保容器至少为视口高度 */
+  min-height: 100vh;
 }
 
 .header {
@@ -50,6 +50,7 @@ html,
   padding: 1em;
   padding-top: 64px; /* 根据头部高度调整 */
   padding-bottom: 64px; /* 根据底部高度调整 */
+  position: relative; /* 确保子元素能够正确定位 */
 }
 
 .footer {

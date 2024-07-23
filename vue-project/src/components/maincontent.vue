@@ -265,14 +265,20 @@
     <el-row>
       <el-col :span="24" :xs="24">
         <h2 id="a3">交流專區</h2>
+        <MessageBoard />
       </el-col>
     </el-row>
   </el-main>
 </template>
 
 <script>
+import MessageBoard from './MessageBoard.vue'
+
 export default {
-  name: 'MainContent'
+  name: 'MainContent',
+  components: {
+    MessageBoard
+  }
 }
 </script>
 
@@ -312,33 +318,33 @@ img {
 }
 
 .el-carousel__item:nth-child(1) {
-  background: url('../assets/福壽螺.png') no-repeat center;
-  background-size: 80% 100%;
+  background: url('../assets/福壽螺.png') no-repeat bottom;
+  background-size: 100% 50%;
 }
 
 .el-carousel__item:nth-child(2) {
-  background: url('../assets/入侵紅火蟻.png') no-repeat center;
-  background-size: 80% 100%;
+  background: url('../assets/入侵紅火蟻.png') no-repeat bottom;
+  background-size: 100% 50%;
 }
 
 .el-carousel__item:nth-child(3) {
-  background: url('../assets/中國梨木蝨.png') no-repeat center;
-  background-size: 80% 100%;
+  background: url('../assets/中國梨木蝨.png') no-repeat bottom;
+  background-size: 100% 50%;
 }
 
 .el-carousel__item:nth-child(4) {
-  background: url('../assets/河殼菜蛤.png') no-repeat center;
-  background-size: 80% 100%;
+  background: url('../assets/河殼菜蛤.png') no-repeat bottom;
+  background-size: 100% 50%;
 }
 
 .el-carousel__item:nth-child(5) {
-  background: url('../assets/緬甸小鼠.png') no-repeat center;
-  background-size: 80% 100%;
+  background: url('../assets/緬甸小鼠.png') no-repeat bottom;
+  background-size: 100% 50%;
 }
 
 .el-carousel__item:nth-child(6) {
-  background: url('../assets/多線南蜥.png') no-repeat center;
-  background-size: 80% 100%;
+  background: url('../assets/多線南蜥.png') no-repeat bottom;
+  background-size: 100% 50%;
 }
 
 /* PC版樣式 */
@@ -355,6 +361,13 @@ img {
   .el-col img:last-child {
     float: right;
     margin-left: 5em;
+  }
+
+  .el-carousel__item {
+    max-width: 100%;
+    height: 200%;
+    position: absolute;
+    top: -100%;
   }
 }
 </style>

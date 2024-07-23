@@ -13,10 +13,12 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "aos": "^2.3.4",
-    "element-plus": "^2.7.6",
+    "element-plus": "^2.7.7",
     "gsap": "^3.12.5",
     "swiper": "^11.1.4",
-    "vue": "^3.4.31"
+    "vue": "^3.4.31",
+    "vue-router": "^4.0.13",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",

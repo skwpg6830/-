@@ -18,11 +18,63 @@
       <el-menu-item index="1"><a href="#a1">面臨現狀</a></el-menu-item>
       <el-menu-item index="2"><a href="#a2">對策</a></el-menu-item>
       <el-menu-item index="3"><a href="#a3">交流專區</a></el-menu-item>
-      <el-menu-item index="4">關於我們</el-menu-item>
+      <el-menu-item index="4"><a href="#a4">關於我們</a></el-menu-item>
       <div class="flex-grow"></div>
-      <el-menu-item index="5">註冊</el-menu-item>
-      <el-menu-item index="6">登入</el-menu-item>
+      <el-menu-item index="5" @click="showRegisterDialog = true">註冊</el-menu-item>
+      <el-menu-item index="6" @click="showLoginDialog = true">登入</el-menu-item>
     </el-menu>
+    <!-- 註冊彈窗 -->
+    <el-dialog v-model="showRegisterDialog" title="註冊" style="text-align: center">
+      <el-form :model="registerForm">
+        <el-form-item label="帳號">
+          <el-input v-model="registerForm.username"></el-input>
+        </el-form-item>
+        <el-form-item label="密碼">
+          <el-input type="password" v-model="registerForm.password"></el-input>
+        </el-form-item>
+        <el-form-item label="確認密碼">
+          <el-input type="password" v-model="registerForm.confirmPassword"></el-input>
+        </el-form-item>
+        <el-form-item label="性別">
+          <el-radio-group v-model="registerForm.gender" placeholder="請選擇性別">
+            <el-radio label="male">男</el-radio>
+            <el-radio label="female">女</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="年齡">
+          <el-select type="number" v-model="registerForm.age" placeholder="請選擇年齡">
+            <el-option label="未滿12歲" value="under_12"></el-option>
+            <el-option label="13~18歲" value="13_18"></el-option>
+            <el-option label="19~23歲" value="19_23"></el-option>
+            <el-option label="24~29歲" value="24_29"></el-option>
+            <el-option label="30~39歲" value="30_39"></el-option>
+            <el-option label="40~49歲" value="40_49"></el-option>
+            <el-option label="50~59歲" value="50_59"></el-option>
+            <el-option label="60歲以上" value="60_above"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showRegisterDialog = false">取消</el-button>
+        <el-button type="primary" @click="handleRegister">註冊</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 登入彈窗 -->
+    <el-dialog v-model="showLoginDialog" title="登入" style="text-align: center">
+      <el-form :model="loginForm">
+        <el-form-item label="帳號">
+          <el-input v-model="loginForm.username"></el-input>
+        </el-form-item>
+        <el-form-item label="密碼">
+          <el-input type="password" v-model="loginForm.password"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showLoginDialog = false">取消</el-button>
+        <el-button type="primary" @click="handleLogin">登入</el-button>
+      </template>
+    </el-dialog>
   </el-header>
 </template>
 
@@ -33,7 +85,20 @@ export default {
     return {
       activeIndex: '1',
       isMenuOpen: false,
-      isMobile: window.innerWidth <= 768
+      isMobile: window.innerWidth <= 768,
+      showRegisterDialog: false,
+      showLoginDialog: false,
+      registerForm: {
+        username: '',
+        password: '',
+        confirmPassword: '',
+        gender: '',
+        age: ''
+      },
+      loginForm: {
+        username: '',
+        password: ''
+      }
     }
   },
   methods: {
@@ -45,6 +110,16 @@ export default {
     },
     handleResize() {
       this.isMobile = window.innerWidth <= 768
+    },
+    handleRegister() {
+      console.log('註冊信息:', this.registerForm)
+      this.showRegisterDialog = false
+      // 在此處添加註冊邏輯
+    },
+    handleLogin() {
+      console.log('登入信息:', this.loginForm)
+      this.showLoginDialog = false
+      // 在此處添加登入邏輯
     }
   },
   mounted() {
@@ -99,10 +174,9 @@ a {
 
 @media (max-width: 768px) {
   .menu-toggle {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
+    display: block;
+    background-color: white;
+    width: 100px;
     font-size: 24px;
   }
 
@@ -112,7 +186,7 @@ a {
   }
 
   .el-menu-demo.open {
-    display: flex;
+    display: block;
   }
 
   .flex-grow {
