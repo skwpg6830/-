@@ -62,8 +62,8 @@ html,
 .main-content {
   flex: 1;
   padding: 1em;
-  padding-top: 64px; /* 根据头部高度调整 */
-  padding-bottom: 64px; /* 根据底部高度调整 */
-  position: relative; /* 确保子元素能够正确定位 */
+  padding-top: 64px; /* 根據上方高度调整 */
+  padding-bottom: 64px; /* 根據下方高度调整 */
+  position: relative; /* 確保子元素能夠正確定位 */
 }
 </style>
