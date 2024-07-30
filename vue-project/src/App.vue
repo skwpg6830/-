@@ -3,10 +3,6 @@
     <appheader class="header" @login="handleLogin" />
     <el-main class="main-content">
       <maincontent v-if="!isLoggedIn" />
-      <div v-else>
-        <h2>管理介面</h2>
-        <button @click="logout">登出</button>
-      </div>
     </el-main>
   </el-container>
 </template>
