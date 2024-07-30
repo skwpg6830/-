@@ -23,28 +23,47 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, onMounted } from 'vue'
 import { ElForm, ElFormItem, ElInput, ElButton, ElCard, ElDivider } from 'element-plus'
 
+// 定義表單資料
 const form = reactive({
   name: '',
   message: ''
 })
 
+// 定義訊息列表
 const messages = reactive([])
 
+// 讀取 localStorage 中的訊息
+onMounted(() => {
+  const storedMessages = localStorage.getItem('messages')
+  if (storedMessages) {
+    messages.push(...JSON.parse(storedMessages))
+  }
+})
+
+// 處理表單提交
 const handleSubmit = () => {
   if (form.name && form.message) {
     messages.push({ ...form })
     form.name = ''
     form.message = ''
+    saveMessages()
   } else {
     alert('Please enter your name and message.')
   }
 }
 
+// 刪除訊息
 const deleteMessage = (index) => {
   messages.splice(index, 1)
+  saveMessages()
+}
+
+// 保存訊息到 localStorage
+const saveMessages = () => {
+  localStorage.setItem('messages', JSON.stringify(messages))
 }
 </script>
 

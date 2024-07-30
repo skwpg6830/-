@@ -1,8 +1,8 @@
 <template>
-  <el-header>
+  <el-header :class="{ hidden: isHeaderHidden }">
     <el-row :gutter="30" align="middle">
       <el-col :span="20" :lg="24" :xs="28">
-        <h1><a href="#">生態永續</a></h1>
+        <a href="#"><img src="../assets/logo.png" /></a>
       </el-col>
       <el-col :span="4" :xs="2" class="menu-toggle-col">
         <el-icon class="menu-toggle" @click="toggleMenu">
@@ -17,16 +17,19 @@
       :ellipsis="false"
       @select="handleSelect"
     >
-      <el-menu-item index="1"><a href="#a1" class="red-text">面臨現狀</a></el-menu-item>
-      <el-menu-item index="2"><a href="#a2" class="red-text">對策</a></el-menu-item>
-      <el-menu-item index="3"><a href="#a3" class="red-text">交流專區</a></el-menu-item>
-      <el-menu-item index="4"><a href="#a4" class="red-text">關於我們</a></el-menu-item>
+      <el-menu-item index="1"><a href="#condition" class="red-text">面臨現狀</a></el-menu-item>
+      <el-menu-item index="2"><a href="#countermeasures" class="red-text">對策</a></el-menu-item>
+      <el-menu-item index="3"><a href="#conversation" class="red-text">交流專區</a></el-menu-item>
+      <el-menu-item index="4"><a href="#material" class="red-text">資料彙整</a></el-menu-item>
       <div class="flex-grow"></div>
-      <el-menu-item index="5" @click="showRegisterDialog = true"
+      <el-menu-item v-if="!isLoggedIn" index="5" @click="showRegisterDialog = true"
         ><a class="red-text">註冊</a></el-menu-item
       >
-      <el-menu-item index="6" @click="showLoginDialog = true"
+      <el-menu-item v-if="!isLoggedIn" index="6" @click="showLoginDialog = true"
         ><a class="red-text">登入</a></el-menu-item
+      >
+      <el-menu-item v-if="isLoggedIn" index="7" @click="logout"
+        ><a class="red-text">登出</a></el-menu-item
       >
     </el-menu>
     <!-- 註冊彈窗 -->
@@ -48,7 +51,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="年齡">
-          <el-select type="number" v-model="registerForm.age" placeholder="請選擇年齡">
+          <el-select v-model="registerForm.age" placeholder="請選擇年齡">
             <el-option label="未滿12歲" value="under_12"></el-option>
             <el-option label="13~18歲" value="13_18"></el-option>
             <el-option label="19~23歲" value="19_23"></el-option>
@@ -62,7 +65,7 @@
       </el-form>
       <template #footer>
         <el-button @click="showRegisterDialog = false">取消</el-button>
-        <el-button type="primary" @click="handleRegister">註冊</el-button>
+        <el-button type="primary" @click="register">註冊</el-button>
       </template>
     </el-dialog>
 
@@ -78,13 +81,14 @@
       </el-form>
       <template #footer>
         <el-button @click="showLoginDialog = false">取消</el-button>
-        <el-button type="primary" @click="handleLogin">登入</el-button>
+        <el-button type="primary" @click="login">登入</el-button>
       </template>
     </el-dialog>
   </el-header>
 </template>
 
 <script>
+import axios from 'axios'
 import { Menu as MenuIcon } from '@element-plus/icons-vue'
 
 export default {
@@ -109,7 +113,10 @@ export default {
       loginForm: {
         username: '',
         password: ''
-      }
+      },
+      isLoggedIn: false,
+      isHeaderHidden: false, // 控制 header 是否隱藏
+      lastScrollY: 0 // 上次滾動位置
     }
   },
   methods: {
@@ -122,22 +129,87 @@ export default {
     handleResize() {
       this.isMobile = window.innerWidth <= 768
     },
-    handleRegister() {
-      console.log('註冊信息:', this.registerForm)
-      this.showRegisterDialog = false
-      // 在此處添加註冊邏輯
+    async register() {
+      if (this.registerForm.password !== this.registerForm.confirmPassword) {
+        alert('密碼和確認密碼不一致')
+        return
+      }
+      try {
+        const response = await axios.post('http://localhost:3000/register', {
+          username: this.registerForm.username,
+          password: this.registerForm.password,
+          gender: this.registerForm.gender,
+          age: this.registerForm.age
+        })
+        alert(response.data)
+        this.showRegisterDialog = false
+        this.checkLoginStatus()
+      } catch (error) {
+        if (error.response) {
+          alert('伺服器錯誤回應: ' + error.response.data)
+        } else if (error.request) {
+          alert('沒有收到伺服器回應: ' + error.request)
+        } else {
+          alert('註冊失敗: ' + error.message)
+        }
+      }
     },
-    handleLogin() {
-      console.log('登入信息:', this.loginForm)
-      this.showLoginDialog = false
-      // 在此處添加登入邏輯
+    async login() {
+      try {
+        const response = await axios.post('http://localhost:3000/login', this.loginForm)
+        const token = response.data.token
+        localStorage.setItem('token', token)
+        this.isLoggedIn = true
+        this.showLoginDialog = false
+        this.$emit('login', true) // 發送事件給父組件
+        alert('登入成功')
+      } catch (error) {
+        if (error.response) {
+          alert('伺服器錯誤回應: ' + error.response.data)
+        } else if (error.request) {
+          alert('沒有收到伺服器回應: ' + error.request)
+        } else {
+          alert('登入失敗: ' + error.message)
+        }
+      }
+    },
+    logout() {
+      localStorage.removeItem('token')
+      this.isLoggedIn = false
+      this.$emit('login', false) // 發送事件給父組件
+      alert('登出成功')
+    },
+    checkLoginStatus() {
+      const token = localStorage.getItem('token')
+      if (token) {
+        // 可以在這裡進行 token 驗證
+        this.isLoggedIn = true
+      } else {
+        this.isLoggedIn = false
+      }
+    },
+    handleScroll() {
+      if (window.scrollY > this.lastScrollY) {
+        // 滾輪向下滾動，隱藏 header 並收起菜單
+        this.isHeaderHidden = true
+        if (this.isMobile) {
+          this.isMenuOpen = false
+        }
+      } else {
+        // 滾輪向上滾動，顯示 header
+        this.isHeaderHidden = false
+      }
+      this.lastScrollY = window.scrollY
     }
   },
   mounted() {
     window.addEventListener('resize', this.handleResize)
+    window.addEventListener('scroll', this.handleScroll)
+    this.checkLoginStatus()
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.handleResize)
+    window.removeEventListener('scroll', this.handleScroll)
   }
 }
 </script>
@@ -154,6 +226,15 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
+  transition: top 0.3s; /* 添加過渡效果 */
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+}
+
+.el-header.hidden {
+  top: -64px; /* 隱藏 header */
 }
 
 .menu-toggle {

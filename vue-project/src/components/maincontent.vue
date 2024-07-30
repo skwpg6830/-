@@ -11,7 +11,7 @@
     </el-row>
     <el-row>
       <el-col :span="24" :xs="24">
-        <h2 id="a1">面臨現狀</h2>
+        <h2 id="condition">面臨現狀</h2>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
         <img src="../assets/面臨現狀.png" />
@@ -156,7 +156,7 @@
     </el-row>
     <el-row>
       <el-col :span="24" :xs="24">
-        <h2 id="a2">對策</h2>
+        <h2 id="countermeasures">對策</h2>
       </el-col>
       <el-col :span="24" :sm="24" :xs="24">
         <div class="demo-collapse">
@@ -264,11 +264,47 @@
     </el-row>
     <el-row>
       <el-col :span="24" :xs="24">
-        <h2 id="a3">交流專區</h2>
+        <h2 id="conversation">交流專區</h2>
         <MessageBoard />
       </el-col>
     </el-row>
+    <el-row>
+      <el-col :span="24" :xs="24">
+        <h2 id="material">資料彙整</h2>
+        <a
+          style="display: flex; justify-content: center"
+          href="https://conservation.forest.gov.tw/aspropaganda"
+          target="_blank"
+          >農業部林業及自然保育署自然保育網</a
+        >
+        <a
+          style="display: flex; justify-content: center"
+          href="https://taicol.tw/zh-hant/catalogue?alien_type=invasive&date=&keyword=&name-select=contain&date-select=gl&page=1"
+          target="_blank"
+          >台灣物種名錄</a
+        >
+        <a
+          style="display: flex; justify-content: center"
+          href="https://smctw.tw/16404/"
+          target="_blank"
+          >台灣科技媒體中心</a
+        >
+        <a
+          style="display: flex; justify-content: center"
+          href="https://gisd.biodiv.tw/taiwan_add_1.php"
+          target="_blank"
+          >全球入侵種資料庫</a
+        >
+        <a
+          style="display: flex; justify-content: center"
+          href="http://www.swan.org.tw/docdir/AZPH9O21Q4.pdf"
+          target="_blank"
+          >台灣十大外來入侵物種</a
+        >
+      </el-col>
+    </el-row>
   </el-main>
+  <div class="footer" :span="24" :xs="24">Copyright © 僅為泰山網頁前端班張建仁做專題用</div>
 </template>
 
 <script>
@@ -304,6 +340,13 @@ h3 {
 h4 {
   color: #03a9f4;
   font-size: 25px;
+}
+
+.footer {
+  text-align: center;
+  color: #fff;
+  background-color: #1f1f1f;
+  padding: 3rem;
 }
 
 img {
