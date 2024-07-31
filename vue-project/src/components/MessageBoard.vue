@@ -14,57 +14,63 @@
 
     <el-divider />
 
-    <el-card v-for="(message, index) in messages" :key="index" class="message-card">
+    <el-card v-for="message in messages" :key="message._id" class="message-card">
       <h4>{{ message.name }}</h4>
       <p>{{ message.message }}</p>
-      <el-button type="danger" @click="deleteMessage(index)">Delete</el-button>
+      <el-button type="danger" @click="deleteMessage(message._id)">Delete</el-button>
     </el-card>
   </div>
 </template>
 
 <script setup>
 import { reactive, onMounted } from 'vue'
-import { ElForm, ElFormItem, ElInput, ElButton, ElCard, ElDivider } from 'element-plus'
+import { ElMessage } from 'element-plus'
+import axios from 'axios'
 
-// 定義表單資料
 const form = reactive({
   name: '',
   message: ''
 })
 
-// 定義訊息列表
 const messages = reactive([])
 
-// 讀取 localStorage 中的訊息
-onMounted(() => {
-  const storedMessages = localStorage.getItem('messages')
-  if (storedMessages) {
-    messages.push(...JSON.parse(storedMessages))
+const fetchMessages = async () => {
+  try {
+    const response = await axios.get('http://localhost:3000/messages')
+    messages.splice(0, messages.length, ...response.data)
+  } catch (error) {
+    console.error('獲取留言失敗:', error)
+    ElMessage.error('獲取留言失敗: ' + (error.response?.data || '未知錯誤'))
   }
-})
+}
 
-// 處理表單提交
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (form.name && form.message) {
-    messages.push({ ...form })
-    form.name = ''
-    form.message = ''
-    saveMessages()
+    try {
+      const response = await axios.post('http://localhost:3000/messages', { ...form })
+      ElMessage.success(response.data)
+      form.name = ''
+      form.message = ''
+      fetchMessages()
+    } catch (error) {
+      ElMessage.error('提交失敗: ' + (error.response?.data || '未知錯誤'))
+    }
   } else {
-    alert('Please enter your name and message.')
+    ElMessage.warning('請輸入您的姓名和訊息')
   }
 }
 
-// 刪除訊息
-const deleteMessage = (index) => {
-  messages.splice(index, 1)
-  saveMessages()
+const deleteMessage = async (id) => {
+  try {
+    await axios.delete(`http://localhost:3000/messages/${id}`)
+    ElMessage.warning('留言已刪除')
+    fetchMessages()
+  } catch (error) {
+    ElMessage.error('刪除失敗: ' + (error.response?.data || '未知錯誤'))
+  }
 }
 
-// 保存訊息到 localStorage
-const saveMessages = () => {
-  localStorage.setItem('messages', JSON.stringify(messages))
-}
+onMounted(fetchMessages)
 </script>
 
 <style scoped>

@@ -90,6 +90,7 @@
 <script>
 import axios from 'axios'
 import { Menu as MenuIcon } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 
 export default {
   name: 'AppHeader',
@@ -131,7 +132,7 @@ export default {
     },
     async register() {
       if (this.registerForm.password !== this.registerForm.confirmPassword) {
-        alert('密碼和確認密碼不一致')
+        ElMessage.error('密碼和確認密碼不一致')
         return
       }
       try {
@@ -141,16 +142,16 @@ export default {
           gender: this.registerForm.gender,
           age: this.registerForm.age
         })
-        alert(response.data)
+        ElMessage.success(response.data)
         this.showRegisterDialog = false
         this.checkLoginStatus()
       } catch (error) {
         if (error.response) {
-          alert('伺服器錯誤回應: ' + error.response.data)
+          ElMessage.error('伺服器錯誤回應: ' + error.response.data)
         } else if (error.request) {
-          alert('沒有收到伺服器回應: ' + error.request)
+          ElMessage.error('沒有收到伺服器回應: ' + error.request)
         } else {
-          alert('註冊失敗: ' + error.message)
+          ElMessage.error('註冊失敗: ' + error.message)
         }
       }
     },
@@ -162,14 +163,14 @@ export default {
         this.isLoggedIn = true
         this.showLoginDialog = false
         this.$emit('login', true) // 發送事件給父組件
-        alert('登入成功')
+        ElMessage.success('登入成功')
       } catch (error) {
         if (error.response) {
-          alert('伺服器錯誤回應: ' + error.response.data)
+          ElMessage.error('伺服器錯誤回應: ' + error.response.data)
         } else if (error.request) {
-          alert('沒有收到伺服器回應: ' + error.request)
+          ElMessage.error('沒有收到伺服器回應: ' + error.request)
         } else {
-          alert('登入失敗: ' + error.message)
+          ElMessage.error('登入失敗: ' + error.message)
         }
       }
     },
@@ -177,7 +178,7 @@ export default {
       localStorage.removeItem('token')
       this.isLoggedIn = false
       this.$emit('login', false) // 發送事件給父組件
-      alert('登出成功')
+      ElMessage.success('登出成功')
     },
     checkLoginStatus() {
       const token = localStorage.getItem('token')
@@ -221,7 +222,7 @@ a {
 }
 
 .el-header {
-  background-color: #2ed64b;
+  background-color: #03a9f4;
   height: 64px;
   display: flex;
   align-items: center;
@@ -240,7 +241,7 @@ a {
 .menu-toggle {
   display: none;
   cursor: pointer;
-  color: #03a9f4; /* 更改此處以改變圖標顏色 */
+  color: #2ed64b; /* 更改此處以改變圖標顏色 */
 }
 
 .el-menu-demo {
@@ -269,7 +270,7 @@ a {
 
 @media (max-width: 768px) {
   .el-header {
-    background-color: #2ed64b;
+    background-color: #03a9f4;
     height: 64px;
     display: block;
   }

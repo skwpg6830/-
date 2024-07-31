@@ -8,98 +8,121 @@ const cors = require('cors');
 const app = express();
 const SECRET_KEY = 'your_secret_key';
 
-// 連接到 MongoDB 數據庫，修改數據庫名稱為 newdatabase
+// 连接到 MongoDB 数据库
 mongoose.connect('mongodb://127.0.0.1:27017/newdatabase', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000 // 5 seconds
 })
   .then(() => console.log('Successfully connected to MongoDB'))
   .catch(err => {
     console.error('Failed to connect to MongoDB', err);
-    process.exit(1); // 強制退出以引起注意
+    process.exit(1); // 强制退出以引起注意
   });
 
 app.use(bodyParser.json());
 app.use(cors());
 
-// 定義用戶
+// 定义用户模型
 const User = mongoose.model('User', new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   gender: { type: String, required: true }
 }));
 
-// 註冊
+// 定义留言模型
+const Message = mongoose.model('Message', new mongoose.Schema({
+  name: { type: String, required: true },
+  message: { type: String, required: true }
+}));
+
+// 注册用户
 app.post('/register', async (req, res) => {
   const { username, password, gender } = req.body;
-
-  console.log('Received registration request:', req.body);
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ username, password: hashedPassword, gender });
     await user.save();
-    console.log('User registered successfully:', user);
     res.status(201).send('註冊成功');
   } catch (error) {
-    console.error('User registration failed:', error);
     res.status(400).send(`註冊失敗: ${error.message}`);
   }
 });
 
-// 登陸
+// 登录用户
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
-
-  console.log('Received login request:', req.body);
 
   try {
     const user = await User.findOne({ username });
     if (!user) {
-      console.error('User not found:', username);
       return res.status(400).send('用戶不存在');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      console.error('Invalid password for user:', username);
       return res.status(400).send('密碼錯誤');
     }
 
     const token = jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: '1h' });
-    console.log('User logged in successfully:', username);
     res.status(200).send({ token });
   } catch (error) {
-    console.error('Login failed:', error);
     res.status(500).send('登陸失敗');
   }
 });
 
-// 身分驗證
+// 身份验证中间件
 const authMiddleware = (req, res, next) => {
   const token = req.headers.authorization;
   if (!token) {
-    console.error('Authentication token missing');
     return res.status(401).send('需要認證');
   }
 
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
     req.userId = decoded.userId;
-    console.log('Token verified for user:', req.userId);
     next();
   } catch (error) {
-    console.error('Token verification failed:', error);
     res.status(401).send('認證失敗');
   }
 };
 
-// 受保护的路由示例
-app.get('/protected', authMiddleware, (req, res) => {
-  res.status(200).send('已經認證');
+// 创建留言
+app.post('/messages', async (req, res) => {
+  const { name, message } = req.body;
+
+  try {
+    const newMessage = new Message({ name, message });
+    await newMessage.save();
+    res.status(201).send('留言已保存');
+  } catch (error) {
+    res.status(400).send(`保存失敗: ${error.message}`);
+  }
 });
 
-app.listen(3000, () => {
-  console.log('伺服器成功啟動');
+// 获取所有留言
+app.get('/messages', async (req, res) => {
+  console.log('接收到GET /messages請求');
+  try {
+    const messages = await Message.find();
+    res.status(200).json(messages);
+  } catch (error) {
+    res.status(500).send(`獲取留言失敗: ${error.message}`);
+  }
+});
+
+// 删除留言
+app.delete('/messages/:id', async (req, res) => {
+  try {
+    await Message.findByIdAndDelete(req.params.id);
+    res.status(200).send('留言已刪除');
+  } catch (error) {
+    res.status(400).send(`刪除失敗: ${error.message}`);
+  }
+});
+
+// 启动服务器
+const PORT = 3000;
+
+app.listen(PORT, () => {
+  console.log(`伺服器成功啟動 ${PORT}`);
 });

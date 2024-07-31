@@ -58,7 +58,7 @@ export default {
   methods: {
     async register() {
       if (this.registerForm.password !== this.registerForm.confirmPassword) {
-        alert('密碼和確認密碼不一致')
+        this.$emit('register-failed', '密碼和確認密碼不一致')
         return
       }
 
@@ -69,8 +69,8 @@ export default {
           password: this.registerForm.password,
           gender: this.registerForm.gender
         })
-        alert(response.data)
-        // 清除表单输入
+        this.$emit('register-success', response.data)
+        // 清除表單輸入
         this.registerForm = {
           username: '',
           password: '',
@@ -78,7 +78,7 @@ export default {
           gender: 'male'
         }
       } catch (error) {
-        alert(error.response?.data || '註冊失敗')
+        this.$emit('register-failed', error.response?.data || '註冊失敗')
       } finally {
         this.isLoading = false
       }
@@ -90,15 +90,14 @@ export default {
         const token = response.data.token
         localStorage.setItem('token', token)
         this.isLoggedIn = true
-        this.$emit('login', true) // 發送事件給父組件
-        alert('登入成功')
-        // 清除表单输入
+        this.$emit('login-success', '登入成功')
+        // 清除表單輸入
         this.loginForm = {
           username: '',
           password: ''
         }
       } catch (error) {
-        alert('登入失敗: ' + (error.response?.data || '未知錯誤'))
+        this.$emit('login-failed', '登入失敗: ' + (error.response?.data || '未知錯誤'))
       } finally {
         this.isLoading = false
       }
@@ -106,12 +105,11 @@ export default {
     logout() {
       localStorage.removeItem('token')
       this.isLoggedIn = false
-      this.$emit('login', false) // 發送事件給父組件
+      this.$emit('logout-success', '登出成功')
     },
     checkLoginStatus() {
       const token = localStorage.getItem('token')
       if (token) {
-        // 可以在這裡進行 token 驗證
         this.isLoggedIn = true
       } else {
         this.isLoggedIn = false
@@ -125,7 +123,6 @@ export default {
 </script>
 
 <style scoped>
-/* 添加一些样式使表单更美观 */
 form {
   max-width: 300px;
   margin: auto;
