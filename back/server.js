@@ -6,15 +6,18 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 
 const app = express();
-const SECRET_KEY = 'your_secret_key';
+const SECRET_KEY = process.env.SECRET_KEY || 'your_secret_key'; // 从环境变量获取密钥
 
 // 连接到 MongoDB 数据库
 mongoose.connect('mongodb://127.0.0.1:27017/newdatabase', {
   serverSelectionTimeoutMS: 5000 // 5 seconds
 })
-  .then(() => console.log('Successfully connected to MongoDB'))
+  .then(() => {
+    console.log('成功連接到 MongoDB');
+    createDefaultAdmin(); // 创建默认管理员
+  })
   .catch(err => {
-    console.error('Failed to connect to MongoDB', err);
+    console.error('無法連接到 MongoDB', err);
     process.exit(1); // 强制退出以引起注意
   });
 
@@ -25,7 +28,8 @@ app.use(cors());
 const User = mongoose.model('User', new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  gender: { type: String, required: true }
+  gender: { type: String, required: true },
+  role: { type: String, default: 'user' } // 新增 role 字段，默认值为 'user'
 }));
 
 // 定义留言模型
@@ -33,6 +37,23 @@ const Message = mongoose.model('Message', new mongoose.Schema({
   name: { type: String, required: true },
   message: { type: String, required: true }
 }));
+
+// 创建默认管理员
+// async function createDefaultAdmin() {
+//   const adminExists = await User.findOne({ username: 'admin' });
+//   if (!adminExists) {
+//     const username = 'admin';
+//     const password = '123';
+//     const gender = 'male';
+//     const role = 'admin';
+
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     const adminUser = new User({ username, password: hashedPassword, gender, role });
+//     await adminUser.save();
+//     console.log('Default admin user created successfully');
+//   }
+// }
 
 // 注册用户
 app.post('/register', async (req, res) => {
@@ -63,7 +84,7 @@ app.post('/login', async (req, res) => {
       return res.status(400).send('密碼錯誤');
     }
 
-    const token = jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user._id, role: user.role }, SECRET_KEY, { expiresIn: '1h' });
     res.status(200).send({ token });
   } catch (error) {
     res.status(500).send('登陸失敗');
@@ -80,6 +101,7 @@ const authMiddleware = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
     req.userId = decoded.userId;
+    req.userRole = decoded.role;
     next();
   } catch (error) {
     res.status(401).send('認證失敗');
@@ -87,7 +109,7 @@ const authMiddleware = (req, res, next) => {
 };
 
 // 创建留言
-app.post('/messages', async (req, res) => {
+app.post('/messages', authMiddleware, async (req, res) => {
   const { name, message } = req.body;
 
   try {
@@ -111,7 +133,11 @@ app.get('/messages', async (req, res) => {
 });
 
 // 删除留言
-app.delete('/messages/:id', async (req, res) => {
+app.delete('/messages/:id', authMiddleware, async (req, res) => {
+  if (req.userRole !== 'admin') {
+    return res.status(403).send('只有管理員才能刪除留言');
+  }
+
   try {
     await Message.findByIdAndDelete(req.params.id);
     res.status(200).send('留言已刪除');
@@ -125,4 +151,13 @@ const PORT = 3000;
 
 app.listen(PORT, () => {
   console.log(`伺服器成功啟動 ${PORT}`);
+});
+
+mongoose.connection.on('connected', () => {
+  console.log('Connected to MongoDB');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('Could not connect to MongoDB:', err);
+  process.exit(1); // Force exit on connection error
 });

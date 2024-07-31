@@ -28,7 +28,10 @@
       <el-menu-item v-if="!isLoggedIn" index="6" @click="showLoginDialog = true"
         ><a class="red-text">登入</a></el-menu-item
       >
-      <el-menu-item v-if="isLoggedIn" index="7" @click="logout"
+      <el-menu-item v-if="isAdmin" index="7" @click="manage"
+        ><a class="red-text">管理</a></el-menu-item
+      >
+      <el-menu-item v-if="isLoggedIn" index="8" @click="logout"
         ><a class="red-text">登出</a></el-menu-item
       >
     </el-menu>
@@ -160,11 +163,17 @@ export default {
         const response = await axios.post('http://localhost:3000/login', this.loginForm)
         const token = response.data.token
         localStorage.setItem('token', token)
+
+        // 解码 token 并检查角色
+        const decodedToken = JSON.parse(atob(token.split('.')[1]))
+        this.isAdmin = decodedToken.role === 'admin'
         this.isLoggedIn = true
+
         this.showLoginDialog = false
-        this.$emit('login', true) // 發送事件給父組件
+        this.$emit('login', true)
         ElMessage.success('登入成功')
       } catch (error) {
+        // 错误处理
         if (error.response) {
           ElMessage.error('伺服器錯誤回應: ' + error.response.data)
         } else if (error.request) {
@@ -180,13 +189,19 @@ export default {
       this.$emit('login', false) // 發送事件給父組件
       ElMessage.success('登出成功')
     },
+    manage() {
+      // 在這裡添加管理邏輯，例如導航到管理頁面
+      console.log('管理功能啟動')
+    },
     checkLoginStatus() {
       const token = localStorage.getItem('token')
       if (token) {
-        // 可以在這裡進行 token 驗證
+        const decodedToken = JSON.parse(atob(token.split('.')[1]))
+        this.isAdmin = decodedToken.role === 'admin'
         this.isLoggedIn = true
       } else {
         this.isLoggedIn = false
+        this.isAdmin = false
       }
     },
     handleScroll() {
@@ -211,6 +226,10 @@ export default {
   beforeUnmount() {
     window.removeEventListener('resize', this.handleResize)
     window.removeEventListener('scroll', this.handleScroll)
+  },
+  manage() {
+    // 添加你的管理界面逻辑
+    this.$emit('manage', '管理功能啟動')
   }
 }
 </script>

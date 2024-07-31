@@ -28,10 +28,11 @@
     </form>
 
     <!-- 管理和登出選項 -->
-    <div v-if="isLoggedIn">
-      <h2>歡迎, 管理員</h2>
+    <!-- <div v-if="isLoggedIn">
+      <h2>歡迎, {{ isAdmin ? '管理員' : '用戶' }}</h2>
       <button @click="logout">登出</button>
-    </div>
+      <button v-if="isAdmin" @click="manage">管理</button>
+    </div> -->
   </div>
 </template>
 
@@ -52,6 +53,7 @@ export default {
         password: ''
       },
       isLoggedIn: false,
+      isAdmin: false,
       isLoading: false
     }
   },
@@ -89,6 +91,8 @@ export default {
         const response = await axios.post('http://localhost:3000/login', this.loginForm)
         const token = response.data.token
         localStorage.setItem('token', token)
+        const decodedToken = JSON.parse(atob(token.split('.')[1]))
+        this.isAdmin = decodedToken.role === 'admin'
         this.isLoggedIn = true
         this.$emit('login-success', '登入成功')
         // 清除表單輸入
@@ -105,15 +109,23 @@ export default {
     logout() {
       localStorage.removeItem('token')
       this.isLoggedIn = false
+      this.isAdmin = false
       this.$emit('logout-success', '登出成功')
     },
     checkLoginStatus() {
       const token = localStorage.getItem('token')
       if (token) {
+        const decodedToken = JSON.parse(atob(token.split('.')[1]))
+        this.isAdmin = decodedToken.role === 'admin'
         this.isLoggedIn = true
       } else {
         this.isLoggedIn = false
+        this.isAdmin = false
       }
+    },
+    manage() {
+      // 添加你的管理界面逻辑
+      this.$emit('manage', '管理功能啟動')
     }
   },
   created() {
