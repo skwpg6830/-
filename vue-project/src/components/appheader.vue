@@ -46,8 +46,8 @@
         </el-form-item>
         <el-form-item label="性別">
           <el-radio-group v-model="registerForm.gender" placeholder="請選擇性別">
-            <el-radio label="male">男</el-radio>
-            <el-radio label="female">女</el-radio>
+            <el-radio value="male">男</el-radio>
+            <el-radio value="female">女</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="年齡">
