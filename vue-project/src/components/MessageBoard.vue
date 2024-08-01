@@ -24,7 +24,6 @@
 
 <script setup>
 import { reactive, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
 import axios from 'axios'
 
 const form = reactive({
@@ -36,37 +35,61 @@ const messages = reactive([])
 
 const fetchMessages = async () => {
   try {
-    const response = await axios.get('http://localhost:3000/messages')
+    const response = await axios.get('http://localhost:3000/messages', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
     messages.splice(0, messages.length, ...response.data)
+    console.log('獲取留言成功')
   } catch (error) {
     console.error('獲取留言失敗:', error)
-    ElMessage.error('獲取留言失敗: ' + (error.response?.data || '未知錯誤'))
   }
 }
 
 const handleSubmit = async () => {
   if (form.name && form.message) {
     try {
-      const response = await axios.post('http://localhost:3000/messages', { ...form })
-      ElMessage.success(response.data)
+      const response = await axios.post(
+        'http://localhost:3000/messages',
+        { ...form },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      )
+      console.log('提交成功:', response.data)
       form.name = ''
       form.message = ''
       fetchMessages()
     } catch (error) {
-      ElMessage.error('提交失敗: ' + (error.response?.data || '未知錯誤'))
+      if (error.response && error.response.status === 401) {
+        // 处理令牌过期
+        console.error('身份验证失败，请重新登录')
+        localStorage.removeItem('token')
+        alert('身份验证失败，请重新登录')
+        // 这里可以引导用户到登录页面
+      } else {
+        console.error('提交失敗:', error)
+      }
     }
   } else {
-    ElMessage.warning('請輸入您的姓名和訊息')
+    console.warn('請輸入您的姓名和訊息')
   }
 }
 
 const deleteMessage = async (id) => {
   try {
-    await axios.delete(`http://localhost:3000/messages/${id}`)
-    ElMessage.warning('留言已刪除')
+    await axios.delete(`http://localhost:3000/messages/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+    console.log('留言已刪除')
     fetchMessages()
   } catch (error) {
-    ElMessage.error('刪除失敗: ' + (error.response?.data || '未知錯誤'))
+    console.error('刪除失敗:', error)
   }
 }
 

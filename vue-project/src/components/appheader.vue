@@ -93,7 +93,6 @@
 <script>
 import axios from 'axios'
 import { Menu as MenuIcon } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
 
 export default {
   name: 'AppHeader',
@@ -120,7 +119,8 @@ export default {
       },
       isLoggedIn: false,
       isHeaderHidden: false, // 控制 header 是否隱藏
-      lastScrollY: 0 // 上次滾動位置
+      lastScrollY: 0, // 上次滾動位置
+      isAdmin: false // 是否為管理員
     }
   },
   methods: {
@@ -135,7 +135,7 @@ export default {
     },
     async register() {
       if (this.registerForm.password !== this.registerForm.confirmPassword) {
-        ElMessage.error('密碼和確認密碼不一致')
+        console.error('密碼和確認密碼不一致')
         return
       }
       try {
@@ -145,41 +145,41 @@ export default {
           gender: this.registerForm.gender,
           age: this.registerForm.age
         })
-        ElMessage.success(response.data)
+        console.log('註冊成功:', response.data)
         this.showRegisterDialog = false
         this.checkLoginStatus()
       } catch (error) {
         if (error.response) {
-          ElMessage.error('伺服器錯誤回應: ' + error.response.data)
+          console.error('伺服器錯誤回應:', error.response.data)
         } else if (error.request) {
-          ElMessage.error('沒有收到伺服器回應: ' + error.request)
+          console.error('沒有收到伺服器回應:', error.request)
         } else {
-          ElMessage.error('註冊失敗: ' + error.message)
+          console.error('註冊失敗:', error.message)
         }
       }
     },
+
     async login() {
       try {
         const response = await axios.post('http://localhost:3000/login', this.loginForm)
         const token = response.data.token
         localStorage.setItem('token', token)
 
-        // 解码 token 并检查角色
+        // 解碼 token 並檢查角色
         const decodedToken = JSON.parse(atob(token.split('.')[1]))
         this.isAdmin = decodedToken.role === 'admin'
         this.isLoggedIn = true
 
         this.showLoginDialog = false
         this.$emit('login', true)
-        ElMessage.success('登入成功')
+        console.log('登入成功')
       } catch (error) {
-        // 错误处理
         if (error.response) {
-          ElMessage.error('伺服器錯誤回應: ' + error.response.data)
+          console.error('伺服器錯誤回應:', error.response.data)
         } else if (error.request) {
-          ElMessage.error('沒有收到伺服器回應: ' + error.request)
+          console.error('沒有收到伺服器回應:', error.request)
         } else {
-          ElMessage.error('登入失敗: ' + error.message)
+          console.error('登入失敗:', error.message)
         }
       }
     },
@@ -187,7 +187,7 @@ export default {
       localStorage.removeItem('token')
       this.isLoggedIn = false
       this.$emit('login', false) // 發送事件給父組件
-      ElMessage.success('登出成功')
+      console.log('登出成功')
     },
     manage() {
       // 在這裡添加管理邏輯，例如導航到管理頁面
@@ -226,10 +226,6 @@ export default {
   beforeUnmount() {
     window.removeEventListener('resize', this.handleResize)
     window.removeEventListener('scroll', this.handleScroll)
-  },
-  manage() {
-    // 添加你的管理界面逻辑
-    this.$emit('manage', '管理功能啟動')
   }
 }
 </script>

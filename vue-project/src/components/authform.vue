@@ -14,6 +14,18 @@
         <option value="male">男</option>
         <option value="female">女</option>
       </select>
+      <label for="age">年齡:</label>
+      <select v-model="registerForm.age" required>
+        <!-- 改為選擇框 -->
+        <option value="under_12">12以下</option>
+        <option value="13_18">13-18</option>
+        <option value="19_23">19-23</option>
+        <option value="24_29">24-29</option>
+        <option value="30_39">30-39</option>
+        <option value="40_49">40-49</option>
+        <option value="50_59">50-59</option>
+        <option value="60_above">60以上</option>
+      </select>
       <button type="submit" :disabled="isLoading">註冊</button>
     </form>
 
@@ -28,11 +40,11 @@
     </form>
 
     <!-- 管理和登出選項 -->
-    <!-- <div v-if="isLoggedIn">
+    <div v-if="isLoggedIn">
       <h2>歡迎, {{ isAdmin ? '管理員' : '用戶' }}</h2>
       <button @click="logout">登出</button>
       <button v-if="isAdmin" @click="manage">管理</button>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -46,7 +58,8 @@ export default {
         username: '',
         password: '',
         confirmPassword: '',
-        gender: 'male'
+        gender: 'male',
+        age: '' // 年齡字段
       },
       loginForm: {
         username: '',
@@ -69,7 +82,8 @@ export default {
         const response = await axios.post('http://localhost:3000/register', {
           username: this.registerForm.username,
           password: this.registerForm.password,
-          gender: this.registerForm.gender
+          gender: this.registerForm.gender,
+          age: this.registerForm.age // 發送年齡字段
         })
         this.$emit('register-success', response.data)
         // 清除表單輸入
@@ -77,7 +91,8 @@ export default {
           username: '',
           password: '',
           confirmPassword: '',
-          gender: 'male'
+          gender: 'male',
+          age: ''
         }
       } catch (error) {
         this.$emit('register-failed', error.response?.data || '註冊失敗')
@@ -124,7 +139,7 @@ export default {
       }
     },
     manage() {
-      // 添加你的管理界面逻辑
+      // 添加你的管理界面邏輯
       this.$emit('manage', '管理功能啟動')
     }
   },
