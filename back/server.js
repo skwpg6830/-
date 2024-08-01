@@ -21,8 +21,6 @@ const login = async () => {
   }
 }
 
-
-
 // 定義用戶
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
@@ -57,13 +55,17 @@ mongoose.connect('mongodb://localhost:27017/newdatabase')
 // 用戶註冊
 app.post('/register', async (req, res) => {
   try {
-    const { username, password, gender, age } = req.body;  // 接收年龄字段
+    const { username, password, gender, age } = req.body;
+
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).send('用戶名已存在');
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    
-    // 设置默认头像
     const avatar = gender === 'male' ? 'path/to/male-avatar.jpg' : 'path/to/female-avatar.jpg';
 
-    const newUser = await User.create({ username, password: hashedPassword, gender, age, avatar });  // 保存年龄字段和头像
+    const newUser = await User.create({ username, password: hashedPassword, gender, age, avatar });
     res.status(201).send(newUser);
   } catch (error) {
     console.error('註冊失败:', error);
@@ -86,14 +88,12 @@ app.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign({ userId: user._id, role: user.role, avatar: user.avatar, gender: user.gender }, SECRET_KEY, { expiresIn: '1h' });
-    res.status(200).send({ token, userId: user._id, avatar: user.avatar, gender: user.gender });  // 返回 token 和 userId
+    res.status(200).send({ token, userId: user._id, avatar: user.avatar, gender: user.gender });
   } catch (error) {
     console.error('登錄錯誤:', error);
     res.status(500).send('登陸失敗');
   }
 });
-
-
 
 // 創建留言
 app.post('/messages', authMiddleware, async (req, res) => {
@@ -116,7 +116,7 @@ app.delete('/messages/:id', authMiddleware, async (req, res) => {
     }
 
     if (req.user.role === 'admin' || message.userId.toString() === req.user.userId) {
-      await Message.findByIdAndDelete(req.params.id); // 使用 findByIdAndDelete 方法
+      await Message.findByIdAndDelete(req.params.id);
       res.status(200).send('留言已删除');
     } else {
       res.status(403).send('無權删除留言');
@@ -127,9 +127,6 @@ app.delete('/messages/:id', authMiddleware, async (req, res) => {
   }
 });
 
-
-
-
 // 編輯留言
 app.put('/messages/:id', authMiddleware, async (req, res) => {
   try {
@@ -138,7 +135,6 @@ app.put('/messages/:id', authMiddleware, async (req, res) => {
       return res.status(404).send('留言不存在');
     }
 
-    // 只有普通用戶可以編輯自己的留言
     if (message.userId.toString() !== req.user.userId) {
       return res.status(403).send('無權編輯此留言');
     }
@@ -151,9 +147,6 @@ app.put('/messages/:id', authMiddleware, async (req, res) => {
     res.status(500).send('編輯留言失敗');
   }
 });
-
-
-
 
 // 获取所有留言
 app.get('/messages', async (req, res) => {
@@ -172,12 +165,11 @@ app.get('/user', authMiddleware, async (req, res) => {
     if (!user) {
       return res.status(404).send('用戶未找到');
     }
-    res.send({ role: user.role, userId: user._id }); // 返回 userId
+    res.send({ role: user.role, userId: user._id, avatar: user.avatar, gender: user.gender });
   } catch (error) {
     res.status(500).send('獲取用戶角色失敗');
   }
 });
-
 
 // 啟動服務器
 app.listen(3000, () => {

@@ -124,10 +124,10 @@ export default {
         password: ''
       },
       isLoggedIn: false,
-      isHeaderHidden: false, // 控制 header 是否隱藏
-      lastScrollY: 0, // 上次滾動位置
-      isAdmin: false, // 是否為管理員
-      userAvatar: '' // 用户头像
+      isHeaderHidden: false,
+      lastScrollY: 0,
+      isAdmin: false,
+      userAvatar: ''
     }
   },
   methods: {
@@ -153,7 +153,16 @@ export default {
           age: this.registerForm.age
         })
         console.log('註冊成功:', response.data)
-        this.userAvatar = this.registerForm.gender === 'male' ? maleAvatar : femaleAvatar
+
+        // 根據性別設置默認頭像
+        if (this.registerForm.gender === 'male') {
+          this.userAvatar = maleAvatar
+        } else if (this.registerForm.gender === 'female') {
+          this.userAvatar = femaleAvatar
+        } else {
+          console.error('無效的性別選擇')
+        }
+
         this.showRegisterDialog = false
         this.checkLoginStatus()
       } catch (error) {
@@ -194,13 +203,12 @@ export default {
     logout() {
       localStorage.removeItem('token')
       this.isLoggedIn = false
-      this.isAdmin = false // 清除管理员状态
-      this.userAvatar = '' // 清除头像
-      this.$emit('login', false) // 發送事件給父組件
+      this.isAdmin = false
+      this.userAvatar = ''
+      this.$emit('login', false)
       console.log('登出成功')
     },
     manage() {
-      // 在這裡添加管理頁面的邏輯
       console.log('進入管理頁面')
     },
     checkLoginStatus() {
@@ -218,13 +226,11 @@ export default {
     },
     handleScroll() {
       if (window.scrollY > this.lastScrollY) {
-        // 滾輪向下滾動，隱藏 header 並收起菜單
         this.isHeaderHidden = true
         if (this.isMobile) {
           this.isMenuOpen = false
         }
       } else {
-        // 滾輪向上滾動，顯示 header
         this.isHeaderHidden = false
       }
       this.lastScrollY = window.scrollY
