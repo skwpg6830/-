@@ -1,17 +1,16 @@
 const express = require('express');
-const router = express.Router();
-const auth = require('./middleware/auth');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const authMiddleware = require('./middleware/auth'); // 確保導入正確
 const app = express();
 const SECRET_KEY = 'your_secret_key';
 
 app.use(express.json());
 app.use(cors());
 
-// 定義用戶模型
+// 定義用戶
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
@@ -20,12 +19,9 @@ const userSchema = new mongoose.Schema({
   age: { type: String, required: true }  // 改為字符串類型
 });
 
-
 const User = mongoose.model('User', userSchema);
 
-module.exports = User;
-
-// 定義留言模型
+// 定義留言
 const messageSchema = new mongoose.Schema({
   name: { type: String, required: true },
   message: { type: String, required: true },
@@ -34,7 +30,7 @@ const messageSchema = new mongoose.Schema({
 
 const Message = mongoose.model('Message', messageSchema);
 
-// 連接到 MongoDB
+// 连接到 MongoDB
 mongoose.connect('mongodb://localhost:27017/newdatabase')
   .then(() => {
     console.log('成功連接到 MongoDB');
@@ -43,34 +39,30 @@ mongoose.connect('mongodb://localhost:27017/newdatabase')
     console.error('無法連接到 MongoDB', error);
   });
 
-// 用戶註冊路由
+// 用戶註冊
 app.post('/register', async (req, res) => {
   try {
-    const { username, password, gender, age } = req.body;  // 接收年齡字段
+    const { username, password, gender, age } = req.body;  // 接收年龄字段
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ username, password: hashedPassword, gender, age });  // 保存年齡字段
+    const newUser = await User.create({ username, password: hashedPassword, gender, age });  // 保存年龄字段
     res.status(201).send(newUser);
   } catch (error) {
-    console.error('註冊失敗:', error);
-    res.status(500).send('註冊失敗');
+    console.error('註冊失败:', error);
+    res.status(500).send('註冊失败');
   }
 });
 
-
-// 登入路由
+// 登陸
 app.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
-    console.log(`正在處理登入請求，用戶名：${username}`);
     const user = await User.findOne({ username });
     if (!user) {
-      console.log(`用戶名不存在：${username}`);
       return res.status(400).send('用戶不存在');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      console.log(`密碼錯誤，用户名：${username}`);
       return res.status(400).send('密碼錯誤');
     }
 
@@ -82,48 +74,59 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// 身份驗證中間件
-const auth = (req, res, next) => {
-  const token = req.headers['authorization']?.split(' ')[1]
-  if (!token) {
-    return res.status(401).json({ message: '需要認證' })
-  }
-  try {
-    const verified = jwt.verify(token, process.env.JWT_SECRET)
-    req.user = verified
-    next()
-  } catch (error) {
-    res.status(400).json({ message: '認證失敗' })
-  }
-}
-
-module.exports = auth
-
 // 創建留言
-router.post('/messages', authMiddleware, async (req, res) => {
+app.post('/messages', authMiddleware, async (req, res) => {
   const { name, message } = req.body;
   try {
-    const newMessage = await Message.create({ name, message, userId: req.userId });
+    const newMessage = await Message.create({ name, message, userId: req.user.userId });
     res.status(201).send(newMessage);
   } catch (error) {
-    console.error('創建留言失敗:', error);
-    res.status(500).send('創建留言失敗');
+    console.error('創建留言失败:', error);
+    res.status(500).send('創建留言失败');
   }
 });
 
-// 刪除留言
-router.delete('/messages/:id', authMiddleware, async (req, res) => {
+// 删除留言
+app.delete('/messages/:id', authMiddleware, async (req, res) => {
   try {
-    await Message.findByIdAndDelete(req.params.id);
-    res.status(200).send('留言已刪除');
+    const message = await Message.findById(req.params.id);
+    if (!message) {
+      return res.status(404).send('留言不存在');
+    }
+
+    if (req.user.role !== 'admin' && message.userId.toString() !== req.user.userId) {
+      return res.status(403).send('無權删除留言');
+    }
+
+    await message.remove();
+    res.status(200).send('留言已删除');
   } catch (error) {
-    console.error('刪除留言失敗:', error);
-    res.status(500).send('刪除留言失敗');
+    console.error('删除留言失败:', error);
+    res.status(500).send('删除留言失败');
   }
 });
 
-// 獲取所有留言
-router.get('/messages', async (req, res) => {
+// 编辑留言
+app.put('/messages/:id', authMiddleware, async (req, res) => {
+  try {
+    const message = await Message.findById(req.params.id);
+    if (!message) {
+      return res.status(404).send('留言不存在');
+    }
+    if (req.user.role !== 'admin' && message.userId.toString() !== req.user.userId) {
+      return res.status(403).send('無權編輯留言');
+    }
+    message.message = req.body.message;
+    await message.save();
+    res.status(200).send(message);
+  } catch (error) {
+    console.error('編輯留言失敗:', error);
+    res.status(500).send('編輯留言失敗');
+  }
+});
+
+// 获取所有留言
+app.get('/messages', async (req, res) => {
   try {
     const messages = await Message.find().populate('userId', 'username');
     res.status(200).send(messages);
@@ -133,15 +136,23 @@ router.get('/messages', async (req, res) => {
   }
 });
 
-module.exports = router
-
-// 登出路由（實際上，登出僅僅是前端刪除 token）
-app.post('/logout', authMiddleware, (req, res) => {
-  console.log(`用戶 ${req.userId} 已登出`);
-  res.send({ message: '登出成功' });
+app.get('/user', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);  // 使用 req.user.userId
+    if (!user) {
+      return res.status(404).send('用戶未找到');
+    }
+    res.send({ role: user.role });
+  } catch (error) {
+    res.status(500).send('獲取用戶角色失敗');
+  }
 });
 
-// 啟動伺服器
+
+
+
+
+// 啟動服務器
 app.listen(3000, () => {
   console.log('伺服器成功啟動 3000');
 });

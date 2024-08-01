@@ -22,18 +22,18 @@
       <el-menu-item index="3"><a href="#conversation" class="red-text">交流專區</a></el-menu-item>
       <el-menu-item index="4"><a href="#material" class="red-text">資料彙整</a></el-menu-item>
       <div class="flex-grow"></div>
-      <el-menu-item v-if="!isLoggedIn" index="5" @click="showRegisterDialog = true"
-        ><a class="red-text">註冊</a></el-menu-item
-      >
-      <el-menu-item v-if="!isLoggedIn" index="6" @click="showLoginDialog = true"
-        ><a class="red-text">登入</a></el-menu-item
-      >
-      <el-menu-item v-if="isAdmin" index="7" @click="manage"
-        ><a class="red-text">管理</a></el-menu-item
-      >
-      <el-menu-item v-if="isLoggedIn" index="8" @click="logout"
-        ><a class="red-text">登出</a></el-menu-item
-      >
+      <el-menu-item v-if="!isLoggedIn" index="5" @click="showRegisterDialog = true">
+        <a class="red-text">註冊</a>
+      </el-menu-item>
+      <el-menu-item v-if="!isLoggedIn" index="6" @click="showLoginDialog = true">
+        <a class="red-text">登入</a>
+      </el-menu-item>
+      <el-menu-item v-if="isAdmin" index="7" @click="manage">
+        <a class="red-text">管理</a>
+      </el-menu-item>
+      <el-menu-item v-if="isLoggedIn" index="8" @click="logout">
+        <a class="red-text">登出</a>
+      </el-menu-item>
     </el-menu>
     <!-- 註冊彈窗 -->
     <el-dialog v-model="showRegisterDialog" title="註冊" style="text-align: center">
@@ -158,7 +158,6 @@ export default {
         }
       }
     },
-
     async login() {
       try {
         const response = await axios.post('http://localhost:3000/login', this.loginForm)
@@ -186,6 +185,7 @@ export default {
     logout() {
       localStorage.removeItem('token')
       this.isLoggedIn = false
+      this.isAdmin = false // 清除管理员状态
       this.$emit('login', false) // 發送事件給父組件
       console.log('登出成功')
     },
