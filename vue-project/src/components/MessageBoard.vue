@@ -24,24 +24,26 @@
         placeholder="請編輯訊息"
         rows="4"
       />
-      <el-button v-if="canEditOrDelete(message)" type="danger" @click="deleteMessage(message._id)"
-        >刪除</el-button
-      >
+      <el-button v-if="canDelete(message)" type="danger" @click="deleteMessage(message._id)">
+        刪除
+      </el-button>
       <el-button
-        v-if="canEditOrDelete(message) && !isEditing[message._id]"
+        v-if="canEdit(message) && !isEditing[message._id]"
         type="primary"
         @click="startEditing(message._id, message.message)"
-        >編輯</el-button
       >
+        編輯
+      </el-button>
       <el-button
         v-if="isEditing[message._id]"
         type="success"
         @click="saveEdit(message._id, message.editMessage)"
-        >保存</el-button
       >
-      <el-button v-if="isEditing[message._id]" type="info" @click="cancelEdit(message._id)"
-        >取消</el-button
-      >
+        保存
+      </el-button>
+      <el-button v-if="isEditing[message._id]" type="info" @click="cancelEdit(message._id)">
+        取消
+      </el-button>
     </el-card>
   </div>
 </template>
@@ -58,6 +60,7 @@ const form = reactive({
 const messages = reactive([])
 
 const userRole = ref('')
+const userId = ref('') // 保存當前用戶的 ID
 
 const fetchMessages = async () => {
   try {
@@ -77,7 +80,6 @@ const fetchMessages = async () => {
   }
 }
 
-// 確保 fetchUserRole 中正確設置 Authorization 頭
 const fetchUserRole = async () => {
   try {
     const response = await axios.get('http://localhost:3000/user', {
@@ -86,6 +88,7 @@ const fetchUserRole = async () => {
       }
     })
     userRole.value = response.data.role
+    userId.value = localStorage.getItem('userId') // 從 localStorage 中獲取用戶 ID
   } catch (error) {
     console.error('獲取用戶角色失敗:', error)
     if (error.response && error.response.status === 400) {
@@ -112,11 +115,9 @@ const handleSubmit = async () => {
       fetchMessages()
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        // 處理過期
         console.error('身份任證失败，請重新登陸')
         localStorage.removeItem('token')
         alert('身份驗證失败，請重新登陸')
-        // 這裡可以引導用戶到登陸頁面
       } else {
         console.error('提交失敗:', error)
       }
@@ -140,15 +141,20 @@ const deleteMessage = async (id) => {
   }
 }
 
-const canEditOrDelete = (message) => {
-  return userRole.value === 'admin' || message.userId._id === localStorage.getItem('userId')
+const canDelete = (message) => {
+  // 管理員可以刪除任何留言，用戶只能刪除自己的留言
+  return userRole.value === 'admin' || message.userId._id === userId.value
+}
+
+const canEdit = (message) => {
+  // 用戶只能編輯自己的留言
+  return message.userId._id === userId.value
 }
 
 const isEditing = reactive({})
 
 const startEditing = (id, messageContent) => {
   isEditing[id] = true
-  // 確認正確使用 messageContent 來初始化編輯狀態
   messages.find((message) => message._id === id).editMessage = messageContent
 }
 
