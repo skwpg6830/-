@@ -74,7 +74,7 @@ const fetchMessages = async () => {
       messages.length,
       ...response.data.map((message) => ({ ...message, editMessage: message.message }))
     )
-    console.log('獲取留言成功')
+    console.log('獲取留言成功', messages)
   } catch (error) {
     console.error('獲取留言失敗:', error)
   }
@@ -88,7 +88,8 @@ const fetchUserRole = async () => {
       }
     })
     userRole.value = response.data.role
-    userId.value = localStorage.getItem('userId') // 從 localStorage 中獲取用戶 ID
+    userId.value = response.data.userId // 从响应中获取 userId
+    console.log('用戶角色和ID:', userRole.value, userId.value)
   } catch (error) {
     console.error('獲取用戶角色失敗:', error)
     if (error.response && error.response.status === 400) {
@@ -142,12 +143,10 @@ const deleteMessage = async (id) => {
 }
 
 const canDelete = (message) => {
-  // 管理員可以刪除任何留言，用戶只能刪除自己的留言
   return userRole.value === 'admin' || message.userId._id === userId.value
 }
 
 const canEdit = (message) => {
-  // 用戶只能編輯自己的留言
   return message.userId._id === userId.value
 }
 

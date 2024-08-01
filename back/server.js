@@ -22,6 +22,7 @@ const login = async () => {
 }
 
 
+
 // 定義用戶
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
@@ -79,12 +80,13 @@ app.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign({ userId: user._id, role: user.role }, SECRET_KEY, { expiresIn: '1h' });
-    res.status(200).send({ token });
+    res.status(200).send({ token, userId: user._id });  // 返回 token 和 userId
   } catch (error) {
     console.error('登錄錯誤:', error);
     res.status(500).send('登陸失敗');
   }
 });
+
 
 // 創建留言
 app.post('/messages', authMiddleware, async (req, res) => {
@@ -158,15 +160,16 @@ app.get('/messages', async (req, res) => {
 
 app.get('/user', authMiddleware, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId); // 這裡使用 req.user.userId
+    const user = await User.findById(req.user.userId);
     if (!user) {
       return res.status(404).send('用戶未找到');
     }
-    res.send({ role: user.role });
+    res.send({ role: user.role, userId: user._id }); // 返回 userId
   } catch (error) {
     res.status(500).send('獲取用戶角色失敗');
   }
 });
+
 
 // 啟動服務器
 app.listen(3000, () => {
