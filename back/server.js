@@ -29,7 +29,8 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, default: 'user' },
   gender: { type: String, required: true },
-  age: { type: String, required: true }  // 改為字符串類型
+  age: { type: String, required: true },  // 改為字符串類型
+  avatar: { type: String, required: true }  // 添加头像字段
 });
 
 const User = mongoose.model('User', userSchema);
@@ -58,7 +59,11 @@ app.post('/register', async (req, res) => {
   try {
     const { username, password, gender, age } = req.body;  // 接收年龄字段
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ username, password: hashedPassword, gender, age });  // 保存年龄字段
+    
+    // 设置默认头像
+    const avatar = gender === 'male' ? 'path/to/male-avatar.jpg' : 'path/to/female-avatar.jpg';
+
+    const newUser = await User.create({ username, password: hashedPassword, gender, age, avatar });  // 保存年龄字段和头像
     res.status(201).send(newUser);
   } catch (error) {
     console.error('註冊失败:', error);
@@ -80,13 +85,14 @@ app.post('/login', async (req, res) => {
       return res.status(400).send('密碼錯誤');
     }
 
-    const token = jwt.sign({ userId: user._id, role: user.role }, SECRET_KEY, { expiresIn: '1h' });
-    res.status(200).send({ token, userId: user._id });  // 返回 token 和 userId
+    const token = jwt.sign({ userId: user._id, role: user.role, avatar: user.avatar, gender: user.gender }, SECRET_KEY, { expiresIn: '1h' });
+    res.status(200).send({ token, userId: user._id, avatar: user.avatar, gender: user.gender });  // 返回 token 和 userId
   } catch (error) {
     console.error('登錄錯誤:', error);
     res.status(500).send('登陸失敗');
   }
 });
+
 
 
 // 創建留言

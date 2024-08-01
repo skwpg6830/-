@@ -34,7 +34,9 @@
       <el-menu-item v-if="isLoggedIn" index="8" @click="logout">
         <a class="red-text">登出</a>
       </el-menu-item>
+      <el-avatar v-if="isLoggedIn" :src="userAvatar" :size="40" class="user-avatar"></el-avatar>
     </el-menu>
+
     <!-- 註冊彈窗 -->
     <el-dialog v-model="showRegisterDialog" title="註冊" style="text-align: center">
       <el-form :model="registerForm">
@@ -93,11 +95,15 @@
 <script>
 import axios from 'axios'
 import { Menu as MenuIcon } from '@element-plus/icons-vue'
+import { ElAvatar } from 'element-plus'
+import maleAvatar from '../assets/male-avatar.png'
+import femaleAvatar from '../assets/female-avatar.png'
 
 export default {
   name: 'AppHeader',
   components: {
-    MenuIcon
+    MenuIcon,
+    ElAvatar
   },
   data() {
     return {
@@ -120,7 +126,8 @@ export default {
       isLoggedIn: false,
       isHeaderHidden: false, // 控制 header 是否隱藏
       lastScrollY: 0, // 上次滾動位置
-      isAdmin: false // 是否為管理員
+      isAdmin: false, // 是否為管理員
+      userAvatar: '' // 用户头像
     }
   },
   methods: {
@@ -146,6 +153,7 @@ export default {
           age: this.registerForm.age
         })
         console.log('註冊成功:', response.data)
+        this.userAvatar = this.registerForm.gender === 'male' ? maleAvatar : femaleAvatar
         this.showRegisterDialog = false
         this.checkLoginStatus()
       } catch (error) {
@@ -168,6 +176,7 @@ export default {
         const decodedToken = JSON.parse(atob(token.split('.')[1]))
         this.isAdmin = decodedToken.role === 'admin'
         this.isLoggedIn = true
+        this.userAvatar = decodedToken.gender === 'male' ? maleAvatar : femaleAvatar
 
         this.showLoginDialog = false
         this.$emit('login', true)
@@ -186,12 +195,13 @@ export default {
       localStorage.removeItem('token')
       this.isLoggedIn = false
       this.isAdmin = false // 清除管理员状态
+      this.userAvatar = '' // 清除头像
       this.$emit('login', false) // 發送事件給父組件
       console.log('登出成功')
     },
     manage() {
-      // 在這裡添加管理邏輯，例如導航到管理頁面
-      console.log('管理功能啟動')
+      // 在這裡添加管理頁面的邏輯
+      console.log('進入管理頁面')
     },
     checkLoginStatus() {
       const token = localStorage.getItem('token')
@@ -199,9 +209,11 @@ export default {
         const decodedToken = JSON.parse(atob(token.split('.')[1]))
         this.isAdmin = decodedToken.role === 'admin'
         this.isLoggedIn = true
+        this.userAvatar = decodedToken.gender === 'male' ? maleAvatar : femaleAvatar
       } else {
         this.isLoggedIn = false
         this.isAdmin = false
+        this.userAvatar = ''
       }
     },
     handleScroll() {
@@ -283,6 +295,12 @@ a {
   justify-content: flex-end;
 }
 
+.user-avatar {
+  margin: 10px 0 0 10px;
+  display: flex;
+  align-items: center; /* 确保头像在垂直方向上居中 */
+}
+
 @media (max-width: 768px) {
   .el-header {
     background-color: #03a9f4;
@@ -310,6 +328,9 @@ a {
 
   .menu-toggle-col {
     justify-content: flex-end;
+  }
+  .user-avatar {
+    display: none;
   }
 }
 
