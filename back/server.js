@@ -39,6 +39,7 @@ const messageSchema = new mongoose.Schema({
   name: { type: String, required: true },
   message: { type: String, required: true },
   userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
+  textColor: { type: String, default: '#000' } // 添加 textColor 属性
 });
 
 const Message = mongoose.model('Message', messageSchema);
@@ -90,9 +91,9 @@ app.post('/login', async (req, res) => {
 
 // 創建留言
 app.post('/messages', authMiddleware, async (req, res) => {
-  const { name, message } = req.body;
+  const { name, message, textColor } = req.body;
   try {
-    const newMessage = await Message.create({ name, message, userId: req.user.userId });
+    const newMessage = await Message.create({ name, message, textColor, userId: req.user.userId });
     res.status(201).send(newMessage);
   } catch (error) {
     console.error('創建留言失败:', error);
@@ -144,6 +145,7 @@ app.put('/messages/:id', authMiddleware, async (req, res) => {
     res.status(500).send('編輯留言失敗');
   }
 });
+
 
 
 
