@@ -3,23 +3,15 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const authMiddleware = require('./middleware/auth'); // 確保導入正確
+const axios = require('axios');
+const authMiddleware = require('./middleware/auth');
 const app = express();
 const SECRET_KEY = 'your_secret_key';
+const path = require('path');
 
 app.use(express.json());
 app.use(cors());
-
-const login = async () => {
-  try {
-    const response = await axios.post('http://localhost:3000/login', { username, password });
-    localStorage.setItem('token', response.data.token);
-    localStorage.setItem('userId', response.data.userId); // 確保保存用戶 ID
-    // 跳轉到主頁或其他操作
-  } catch (error) {
-    console.error('登錄失敗:', error);
-  }
-}
+app.use('/path/to/default-avatar.png', express.static(path.join(__dirname, 'public/images')));
 
 // 定義用戶
 const userSchema = new mongoose.Schema({
@@ -68,8 +60,8 @@ app.post('/register', async (req, res) => {
     const newUser = await User.create({ username, password: hashedPassword, gender, age, avatar });
     res.status(201).send(newUser);
   } catch (error) {
-    console.error('註冊失败:', error);
-    res.status(500).send('註冊失败');
+    console.error('註冊失敗:', error);
+    res.status(500).send('註冊失敗');
   }
 });
 
@@ -102,8 +94,8 @@ app.post('/messages', authMiddleware, async (req, res) => {
     const newMessage = await Message.create({ name, message, textColor, userId: req.user.userId });
     res.status(201).send(newMessage);
   } catch (error) {
-    console.error('創建留言失败:', error);
-    res.status(500).send('創建留言失败');
+    console.error('創建留言失敗:', error);
+    res.status(500).send('創建留言失敗');
   }
 });
 
@@ -122,8 +114,8 @@ app.delete('/messages/:id', authMiddleware, async (req, res) => {
       res.status(403).send('無權删除留言');
     }
   } catch (error) {
-    console.error('删除留言失败:', error);
-    res.status(500).send('删除留言失败');
+    console.error('删除留言失敗:', error);
+    res.status(500).send('删除留言失敗');
   }
 });
 
@@ -151,7 +143,7 @@ app.put('/messages/:id', authMiddleware, async (req, res) => {
 // 获取所有留言
 app.get('/messages', async (req, res) => {
   try {
-    const messages = await Message.find().populate('userId', 'username');
+    const messages = await Message.find().populate('userId', 'username avatar gender');
     res.status(200).send(messages);
   } catch (error) {
     console.error('獲取留言失敗:', error);
@@ -169,6 +161,12 @@ app.get('/user', authMiddleware, async (req, res) => {
   } catch (error) {
     res.status(500).send('獲取用戶角色失敗');
   }
+});
+
+// 全局错误处理
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
 });
 
 // 啟動服務器

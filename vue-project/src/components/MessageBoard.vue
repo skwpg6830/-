@@ -36,7 +36,12 @@
       :class="['message-card', { 'alternate-bg': index % 2 === 0 }]"
     >
       <el-card :style="{ color: message.textColor || '#000' }">
-        <h4>{{ message.name }}</h4>
+        <div class="message-header">
+          <img :src="getAvatarUrl(message.userId)" alt="Avatar" class="avatar" />
+          <h4>{{ message.userId.username }}</h4>
+        </div>
+        <h5>{{ message.name }}</h5>
+        <!-- 顯示討論的主題 -->
         <p v-if="!isEditing[message._id]" :style="{ color: message.textColor || '#000' }">
           {{ message.message }}
         </p>
@@ -78,14 +83,19 @@ import { reactive, ref, onMounted } from 'vue'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 
+// Import images using ES6 import statements
+import femaleAvatar from '@/assets/female-avatar.png'
+import maleAvatar from '@/assets/male-avatar.png' // 根據需要替換為正確的路徑
+
 const form = reactive({
   name: '',
   message: '',
-  textColor: '#000' // 设置默认颜色为黑色
+  textColor: '#000' // 設置默認顏色為黑色
 })
 const messages = reactive([])
 const userRole = ref('')
 const userId = ref('') // 保存當前用戶的 ID
+
 const fetchMessages = async () => {
   try {
     const response = await axios.get('http://localhost:3000/messages', {
@@ -103,6 +113,7 @@ const fetchMessages = async () => {
     console.error('獲取留言失敗:', error)
   }
 }
+
 const fetchUserRole = async () => {
   try {
     const response = await axios.get('http://localhost:3000/user', {
@@ -120,6 +131,7 @@ const fetchUserRole = async () => {
     }
   }
 }
+
 const handleSubmit = async () => {
   if (form.name && form.message) {
     try {
@@ -137,9 +149,10 @@ const handleSubmit = async () => {
         message: '成功發言',
         type: 'success'
       })
+      // Reset form fields
       form.name = ''
       form.message = ''
-      form.textColor = '#000' // 清空颜色选择器并重置为默认颜色
+      form.textColor = '#000' // 清空顏色選擇器並重置為默認顏色
       fetchMessages()
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -162,6 +175,7 @@ const handleSubmit = async () => {
     })
   }
 }
+
 const deleteMessage = async (id) => {
   try {
     await axios.delete(`http://localhost:3000/messages/${id}`, {
@@ -175,17 +189,25 @@ const deleteMessage = async (id) => {
     console.error('刪除失敗:', error)
   }
 }
+
 const canDelete = (message) => {
   return userRole.value === 'admin' || message.userId._id === userId.value
 }
+
 const canEdit = (message) => {
   return message.userId._id === userId.value
 }
+
 const isEditing = reactive({})
+
 const startEditing = (id, messageContent) => {
   isEditing[id] = true
-  messages.find((message) => message._id === id).editMessage = messageContent
+  const message = messages.find((message) => message._id === id)
+  if (message) {
+    message.editMessage = messageContent
+  }
 }
+
 const saveEdit = async (id, newMessage) => {
   try {
     await axios.put(
@@ -204,12 +226,22 @@ const saveEdit = async (id, newMessage) => {
     console.error('編輯失敗:', error)
   }
 }
+
 const cancelEdit = (id) => {
   isEditing[id] = false
 }
+
 const handleColorChange = (color) => {
   form.textColor = color
 }
+
+const getAvatarUrl = (user) => {
+  if (user.avatar) {
+    return user.avatar
+  }
+  return user.gender === 'male' ? maleAvatar : femaleAvatar
+}
+
 const predefinedColors = ref([
   '#ff4500',
   '#ff8c00',
@@ -219,6 +251,7 @@ const predefinedColors = ref([
   '#1e90ff',
   '#c71585'
 ])
+
 onMounted(() => {
   fetchMessages()
   fetchUserRole()
@@ -233,10 +266,23 @@ onMounted(() => {
 }
 
 .alternate-bg {
-  background-color: #f5f5f5; /* 替换为所需的交替背景颜色 */
+  background-color: #f5f5f5; /* 替換為所需的交替背景顏色 */
 }
 
 .el-card {
   transition: background-color 0.3s;
+}
+
+.message-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
 }
 </style>

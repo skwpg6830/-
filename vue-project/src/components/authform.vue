@@ -1,51 +1,5 @@
 <template>
-  <div>
-    <!-- 註冊表單 -->
-    <form v-if="!isLoggedIn" @submit.prevent="register">
-      <h2>註冊</h2>
-      <label for="username">用戶名:</label>
-      <input type="text" v-model="registerForm.username" required />
-      <label for="password">密碼:</label>
-      <input type="password" v-model="registerForm.password" required />
-      <label for="confirmPassword">確認密碼:</label>
-      <input type="password" v-model="registerForm.confirmPassword" required />
-      <label for="gender">性別:</label>
-      <select v-model="registerForm.gender">
-        <option value="male">男</option>
-        <option value="female">女</option>
-      </select>
-      <label for="age">年齡:</label>
-      <select v-model="registerForm.age" required>
-        <!-- 改為選擇框 -->
-        <option value="under_12">12以下</option>
-        <option value="13_18">13-18</option>
-        <option value="19_23">19-23</option>
-        <option value="24_29">24-29</option>
-        <option value="30_39">30-39</option>
-        <option value="40_49">40-49</option>
-        <option value="50_59">50-59</option>
-        <option value="60_above">60以上</option>
-      </select>
-      <button type="submit" :disabled="isLoading">註冊</button>
-    </form>
-
-    <!-- 登入表單 -->
-    <form v-if="!isLoggedIn" @submit.prevent="login">
-      <h2>登入</h2>
-      <label for="username">用戶名:</label>
-      <input type="text" v-model="loginForm.username" required />
-      <label for="password">密碼:</label>
-      <input type="password" v-model="loginForm.password" required />
-      <button type="submit" :disabled="isLoading">登入</button>
-    </form>
-
-    <!-- 管理和登出選項 -->
-    <div v-if="isLoggedIn">
-      <h2>歡迎, {{ isAdmin ? '管理員' : '用戶' }}</h2>
-      <button @click="logout">登出</button>
-      <button v-if="isAdmin" @click="manage">管理</button>
-    </div>
-  </div>
+  <div></div>
 </template>
 
 <script>
@@ -148,22 +102,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-form {
-  max-width: 300px;
-  margin: auto;
-  padding: 1em;
-  border: 1px solid #ccc;
-  border-radius: 1em;
-}
-
-label {
-  margin-top: 1em;
-  display: block;
-}
-
-button {
-  margin-top: 1em;
-}
-</style>

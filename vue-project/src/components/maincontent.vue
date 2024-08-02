@@ -3,6 +3,8 @@
     <el-row :gutter="20">
       <el-col>
         <div>
+          <authform @login-success="onLoginSuccess" />
+          <div v-if="isLoggedIn"></div>
           <el-carousel trigger="click" height="878px">
             <el-carousel-item v-for="item in items" :key="item.id">
               <img :src="item.image" alt="Carousel Image" />
@@ -304,6 +306,8 @@
           >台灣十大外來入侵物種</a
         >
       </el-col>
+      <!-- 使用 AuthForm 組件 -->
+      <AuthForm />
     </el-row>
   </el-main>
   <div class="footer" :span="24" :xs="24">Copyright © 僅為泰山網頁前端班張建仁做專題用</div>
@@ -312,25 +316,36 @@
 <script>
 import { ref, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
+import AuthForm from '@/components/authform.vue'
 import MessageBoard from './MessageBoard.vue'
 
 export default {
   name: 'MainContent',
   components: {
+    AuthForm,
     MessageBoard
   },
   setup() {
     const store = useStore()
     const items = ref([])
     const activeName = ref('1') // 默认展开第一项
+    const isLoggedIn = ref(false)
 
     const fetchData = () => {
       // 模擬 API 請求
       items.value = [
-        { id: 1, image: '../assets/carousel-image-1.jpg' },
-        { id: 2, image: '../assets/carousel-image-2.jpg' }
-        // 其他項目
+        { id: 1, image: '../assets/入侵紅火蟻.png' },
+        { id: 2, image: '../assets/中國梨木蝨.png' },
+        { id: 3, image: '../assets/多線南蜥.png' },
+        { id: 3, image: '../assets/河殼菜蛤.png' },
+        { id: 3, image: '../assets/福壽螺.png' },
+        { id: 3, image: '../assets/緬甸小鼠.png' }
       ]
+    }
+
+    const onLoginSuccess = () => {
+      isLoggedIn.value = true
+      fetchData()
     }
 
     // 監聽登入狀態變更
@@ -349,7 +364,9 @@ export default {
 
     return {
       activeName,
-      items
+      items,
+      isLoggedIn,
+      onLoginSuccess
     }
   }
 }
