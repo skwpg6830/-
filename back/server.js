@@ -30,7 +30,8 @@ const messageSchema = new mongoose.Schema({
   name: { type: String, required: true },
   message: { type: String, required: true },
   userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
-  textColor: { type: String, default: '#000' } // 添加 textColor 属性
+  textColor: { type: String, default: '#000' }, // 添加 textColor 属性
+  likes: { type: Number, default: 0 } // 添加 likes 屬性
 });
 
 const Message = mongoose.model('Message', messageSchema);
@@ -150,6 +151,44 @@ app.get('/messages', async (req, res) => {
     res.status(500).send('獲取留言失敗');
   }
 });
+
+
+// 點讚留言
+app.post('/messages/:id/like', authMiddleware, async (req, res) => {
+  try {
+    const message = await Message.findById(req.params.id);
+    if (!message) {
+      return res.status(404).send('留言不存在');
+    }
+
+    message.likes += 1;
+    await message.save();
+    res.status(200).send({ likes: message.likes });
+  } catch (error) {
+    console.error('點讚失敗:', error);
+    res.status(500).send('點讚失敗');
+  }
+});
+
+// 取消點讚留言
+app.post('/messages/:id/unlike', authMiddleware, async (req, res) => {
+  try {
+    const message = await Message.findById(req.params.id);
+    if (!message) {
+      return res.status(404).send('留言不存在');
+    }
+
+    if (message.likes > 0) {
+      message.likes -= 1;
+      await message.save();
+    }
+    res.status(200).send({ likes: message.likes });
+  } catch (error) {
+    console.error('取消點讚失敗:', error);
+    res.status(500).send('取消點讚失敗');
+  }
+});
+
 
 app.get('/user', authMiddleware, async (req, res) => {
   try {

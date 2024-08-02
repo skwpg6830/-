@@ -1,58 +1,65 @@
 <template>
-  <div>
-    <el-form :model="form" @submit.prevent="handleSubmit">
-      <el-form-item>
-        <el-input v-model="form.name" placeholder="討論的主題" />
-      </el-form-item>
-      <el-form-item>
-        <el-input
-          type="textarea"
-          v-model="form.message"
-          placeholder="請輸入訊息"
-          rows="4"
-          :style="{ color: form.textColor }"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-color-picker
-          v-model="form.textColor"
-          @change="handleColorChange"
-          @active-change="handleColorChange"
-          show-alpha
-          :predefine="predefinedColors"
-        />
-        <span>選擇文字顏色</span>
-      </el-form-item>
-      <el-form-item>
-        <el-button style="width: 100%" type="primary" @click="handleSubmit">送出</el-button>
-      </el-form-item>
-    </el-form>
+  <el-form :model="form" @submit.prevent="handleSubmit">
+    <el-form-item>
+      <el-input v-model="form.name" placeholder="討論的主題" />
+    </el-form-item>
+    <el-form-item>
+      <el-input
+        type="textarea"
+        v-model="form.message"
+        placeholder="請輸入訊息"
+        rows="4"
+        :style="{ color: form.textColor }"
+      />
+    </el-form-item>
+    <el-form-item>
+      <el-color-picker v-model="form.textColor" show-alpha :predefine="predefinedColors" />
+      <span>選擇文字顏色</span>
+    </el-form-item>
+    <el-form-item>
+      <el-button style="width: 100%" type="primary" @click="handleSubmit">送出</el-button>
+    </el-form-item>
+  </el-form>
 
-    <el-divider />
+  <el-divider />
 
-    <div
-      v-for="(message, index) in messages"
-      :key="message._id"
-      :class="['message-card', { 'alternate-bg': index % 2 === 0 }]"
-    >
-      <el-card :style="{ color: message.textColor || '#000' }">
-        <div class="message-header">
-          <img :src="getAvatarUrl(message.userId)" alt="Avatar" class="avatar" />
-          <h4>{{ message.userId.username }}</h4>
-        </div>
-        <h5>{{ message.name }}</h5>
-        <!-- 顯示討論的主題 -->
-        <p v-if="!isEditing[message._id]" :style="{ color: message.textColor || '#000' }">
-          {{ message.message }}
-        </p>
-        <el-input
-          v-else
-          type="textarea"
-          v-model="message.editMessage"
-          placeholder="請編輯訊息"
-          rows="4"
-          :style="{ color: message.textColor || '#000' }"
-        />
+  <div
+    v-for="(message, index) in messages"
+    :key="message._id"
+    :class="['message-card', { 'alternate-bg': index % 2 === 0 }]"
+  >
+    <el-card :style="{ color: message.textColor || '#000' }">
+      <div class="message-header">
+        <img :src="getAvatarUrl(message.userId)" alt="Avatar" class="avatar" />
+        <h4>{{ message.userId.username }}</h4>
+      </div>
+      <h5>{{ message.name }}</h5>
+      <p v-if="!isEditing[message._id]" :style="{ color: message.textColor || '#000' }">
+        {{ message.message }}
+      </p>
+      <el-input
+        v-else
+        type="textarea"
+        v-model="message.editMessage"
+        placeholder="請編輯訊息"
+        rows="4"
+        :style="{ color: message.textColor || '#000' }"
+      />
+      <div class="message-actions">
+        <el-button
+          type="success"
+          @click="likeMessage(message._id)"
+          :disabled="likedMessages.includes(message._id)"
+        >
+          👍 {{ message.likes }}
+        </el-button>
+        <el-button
+          v-if="likedMessages.includes(message._id)"
+          type="danger"
+          @click="unlikeMessage(message._id)"
+        >
+          👎 取消點讚
+        </el-button>
         <el-button v-if="canDelete(message)" type="danger" @click="deleteMessage(message._id)">
           刪除
         </el-button>
@@ -73,8 +80,8 @@
         <el-button v-if="isEditing[message._id]" type="info" @click="cancelEdit(message._id)">
           取消
         </el-button>
-      </el-card>
-    </div>
+      </div>
+    </el-card>
   </div>
 </template>
 
@@ -95,6 +102,47 @@ const form = reactive({
 const messages = reactive([])
 const userRole = ref('')
 const userId = ref('') // 保存當前用戶的 ID
+const likedMessages = ref([]) // 追踪已點讚的消息
+
+const likeMessage = async (id) => {
+  try {
+    await axios.post(
+      `http://localhost:3000/messages/${id}/like`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    )
+    ElMessage.success('成功點讚')
+    likedMessages.value.push(id)
+    fetchMessages() // 更新消息列表以反映新的點讚數
+  } catch (error) {
+    console.error('點讚失敗:', error)
+    ElMessage.error('點讚失敗')
+  }
+}
+
+const unlikeMessage = async (id) => {
+  try {
+    await axios.post(
+      `http://localhost:3000/messages/${id}/unlike`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    )
+    ElMessage.success('成功取消點讚')
+    likedMessages.value = likedMessages.value.filter((msgId) => msgId !== id)
+    fetchMessages() // 更新消息列表以反映新的點讚數
+  } catch (error) {
+    console.error('取消點讚失敗:', error)
+    ElMessage.error('取消點讚失敗')
+  }
+}
 
 const fetchMessages = async () => {
   try {
@@ -229,10 +277,6 @@ const saveEdit = async (id, newMessage) => {
 
 const cancelEdit = (id) => {
   isEditing[id] = false
-}
-
-const handleColorChange = (color) => {
-  form.textColor = color
 }
 
 const getAvatarUrl = (user) => {
