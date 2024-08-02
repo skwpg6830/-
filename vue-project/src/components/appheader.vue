@@ -95,7 +95,7 @@
 <script>
 import axios from 'axios'
 import { Menu as MenuIcon } from '@element-plus/icons-vue'
-import { ElAvatar } from 'element-plus'
+import { ElAvatar, ElMessage } from 'element-plus'
 import maleAvatar from '../assets/male-avatar.png'
 import femaleAvatar from '../assets/female-avatar.png'
 
@@ -142,36 +142,34 @@ export default {
     },
     async register() {
       if (this.registerForm.password !== this.registerForm.confirmPassword) {
-        console.error('密碼和確認密碼不一致')
+        ElMessage.error('密碼和確認密碼不一致')
         return
       }
       try {
-        const response = await axios.post('http://localhost:3000/register', {
+        await axios.post('http://localhost:3000/register', {
           username: this.registerForm.username,
           password: this.registerForm.password,
           gender: this.registerForm.gender,
           age: this.registerForm.age
         })
-        console.log('註冊成功:', response.data)
-
+        ElMessage.success('註冊成功')
         // 根據性別設置默認頭像
         if (this.registerForm.gender === 'male') {
           this.userAvatar = maleAvatar
         } else if (this.registerForm.gender === 'female') {
           this.userAvatar = femaleAvatar
         } else {
-          console.error('無效的性別選擇')
+          ElMessage.error('無效的性別選擇')
         }
-
         this.showRegisterDialog = false
         this.checkLoginStatus()
       } catch (error) {
         if (error.response) {
-          console.error('伺服器錯誤回應:', error.response.data)
+          ElMessage.error(`伺服器錯誤回應: ${error.response.data}`)
         } else if (error.request) {
-          console.error('沒有收到伺服器回應:', error.request)
+          ElMessage.error('沒有收到伺服器回應')
         } else {
-          console.error('註冊失敗:', error.message)
+          ElMessage.error(`註冊失敗: ${error.message}`)
         }
       }
     },
@@ -180,23 +178,21 @@ export default {
         const response = await axios.post('http://localhost:3000/login', this.loginForm)
         const token = response.data.token
         localStorage.setItem('token', token)
-
         // 解碼 token 並檢查角色
         const decodedToken = JSON.parse(atob(token.split('.')[1]))
         this.isAdmin = decodedToken.role === 'admin'
         this.isLoggedIn = true
         this.userAvatar = decodedToken.gender === 'male' ? maleAvatar : femaleAvatar
-
         this.showLoginDialog = false
         this.$emit('login', true)
-        console.log('登入成功')
+        ElMessage.success('登入成功')
       } catch (error) {
         if (error.response) {
-          console.error('伺服器錯誤回應:', error.response.data)
+          ElMessage.error(`伺服器錯誤回應: ${error.response.data}`)
         } else if (error.request) {
-          console.error('沒有收到伺服器回應:', error.request)
+          ElMessage.error('沒有收到伺服器回應')
         } else {
-          console.error('登入失敗:', error.message)
+          ElMessage.error(`登入失敗: ${error.message}`)
         }
       }
     },
@@ -206,7 +202,7 @@ export default {
       this.isAdmin = false
       this.userAvatar = ''
       this.$emit('login', false)
-      console.log('登出成功')
+      ElMessage.success('登出成功')
     },
     manage() {
       console.log('進入管理頁面')

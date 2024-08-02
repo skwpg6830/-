@@ -76,18 +76,16 @@
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
 
 const form = reactive({
   name: '',
   message: '',
   textColor: '#000' // 设置默认颜色为黑色
 })
-
 const messages = reactive([])
-
 const userRole = ref('')
 const userId = ref('') // 保存當前用戶的 ID
-
 const fetchMessages = async () => {
   try {
     const response = await axios.get('http://localhost:3000/messages', {
@@ -105,7 +103,6 @@ const fetchMessages = async () => {
     console.error('獲取留言失敗:', error)
   }
 }
-
 const fetchUserRole = async () => {
   try {
     const response = await axios.get('http://localhost:3000/user', {
@@ -123,7 +120,6 @@ const fetchUserRole = async () => {
     }
   }
 }
-
 const handleSubmit = async () => {
   if (form.name && form.message) {
     try {
@@ -136,7 +132,11 @@ const handleSubmit = async () => {
           }
         }
       )
-      console.log('提交成功:', response.data)
+      console.log('成功發言:', response.data)
+      ElMessage({
+        message: '成功發言',
+        type: 'success'
+      })
       form.name = ''
       form.message = ''
       form.textColor = '#000' // 清空颜色选择器并重置为默认颜色
@@ -148,13 +148,20 @@ const handleSubmit = async () => {
         alert('身份驗證失敗，請重新登錄')
       } else {
         console.error('提交失敗:', error)
+        ElMessage({
+          message: '提交失敗',
+          type: 'error'
+        })
       }
     }
   } else {
     console.warn('請輸入您的姓名和訊息')
+    ElMessage({
+      message: '請輸入您的姓名和訊息',
+      type: 'warning'
+    })
   }
 }
-
 const deleteMessage = async (id) => {
   try {
     await axios.delete(`http://localhost:3000/messages/${id}`, {
@@ -168,22 +175,17 @@ const deleteMessage = async (id) => {
     console.error('刪除失敗:', error)
   }
 }
-
 const canDelete = (message) => {
   return userRole.value === 'admin' || message.userId._id === userId.value
 }
-
 const canEdit = (message) => {
   return message.userId._id === userId.value
 }
-
 const isEditing = reactive({})
-
 const startEditing = (id, messageContent) => {
   isEditing[id] = true
   messages.find((message) => message._id === id).editMessage = messageContent
 }
-
 const saveEdit = async (id, newMessage) => {
   try {
     await axios.put(
@@ -202,15 +204,12 @@ const saveEdit = async (id, newMessage) => {
     console.error('編輯失敗:', error)
   }
 }
-
 const cancelEdit = (id) => {
   isEditing[id] = false
 }
-
 const handleColorChange = (color) => {
   form.textColor = color
 }
-
 const predefinedColors = ref([
   '#ff4500',
   '#ff8c00',
@@ -220,7 +219,6 @@ const predefinedColors = ref([
   '#1e90ff',
   '#c71585'
 ])
-
 onMounted(() => {
   fetchMessages()
   fetchUserRole()

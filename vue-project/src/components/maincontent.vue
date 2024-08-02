@@ -4,7 +4,9 @@
       <el-col>
         <div>
           <el-carousel trigger="click" height="878px">
-            <el-carousel-item v-for="item in 6" :key="item"> </el-carousel-item>
+            <el-carousel-item v-for="item in items" :key="item.id">
+              <img :src="item.image" alt="Carousel Image" />
+            </el-carousel-item>
           </el-carousel>
         </div>
       </el-col>
@@ -308,20 +310,49 @@
 </template>
 
 <script>
+import { ref, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
 import MessageBoard from './MessageBoard.vue'
 
 export default {
   name: 'MainContent',
   components: {
     MessageBoard
+  },
+  setup() {
+    const store = useStore()
+    const items = ref([])
+    const activeName = ref('1') // 默认展开第一项
+
+    const fetchData = () => {
+      // 模擬 API 請求
+      items.value = [
+        { id: 1, image: '../assets/carousel-image-1.jpg' },
+        { id: 2, image: '../assets/carousel-image-2.jpg' }
+        // 其他項目
+      ]
+    }
+
+    // 監聽登入狀態變更
+    watch(
+      () => store.state.isLoggedIn,
+      (newVal) => {
+        if (newVal) {
+          fetchData()
+        }
+      }
+    )
+
+    onMounted(() => {
+      fetchData()
+    })
+
+    return {
+      activeName,
+      items
+    }
   }
 }
-</script>
-
-<script setup>
-import { ref } from 'vue'
-
-const activeName = ref('1') // 默认展开第一项
 </script>
 
 <style scoped>
