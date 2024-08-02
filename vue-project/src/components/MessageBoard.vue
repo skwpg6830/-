@@ -266,7 +266,7 @@ onMounted(() => {
 }
 
 .alternate-bg {
-  background-color: #f5f5f5; /* 替換為所需的交替背景顏色 */
+  background-color: #aed581; /* 替換為所需的交替背景顏色 */
 }
 
 .el-card {

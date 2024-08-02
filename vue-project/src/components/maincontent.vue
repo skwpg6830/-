@@ -269,7 +269,9 @@
     <el-row>
       <el-col :span="24" :xs="24">
         <h2 id="conversation">交流專區</h2>
-        <MessageBoard />
+        <el-card class="box-card">
+          <MessageBoard />
+        </el-card>
       </el-col>
     </el-row>
     <el-row>
@@ -412,6 +414,13 @@ img {
   width: 100%;
   display: block;
   color: #2ed64b;
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-dark);
+  box-shadow: var(--el-box-shadow);
+  color: #ff372e;
+  background: #fff176;
 }
 
 .el-carousel__item:nth-child(1) {
