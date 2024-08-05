@@ -80,6 +80,37 @@
         <el-button v-if="isEditing[message._id]" type="info" @click="cancelEdit(message._id)">
           取消
         </el-button>
+        <el-button type="info" @click="toggleReplyForm(message._id)">
+          {{ replyFormVisible[message._id] ? '取消回覆' : '回覆' }}
+        </el-button>
+      </div>
+      <div v-if="replyFormVisible[message._id]" class="reply-form">
+        <el-input
+          type="textarea"
+          v-model="replyMessage[message._id]"
+          placeholder="請輸入回覆訊息"
+          rows="3"
+        />
+        <el-button type="primary" @click="submitReply(message._id)">送出回覆</el-button>
+      </div>
+      <div v-if="message.replies && message.replies.length" class="replies">
+        <el-card
+          v-for="reply in message.replies"
+          :key="reply._id"
+          :style="{ color: reply.textColor || '#000' }"
+        >
+          <div class="reply-header">
+            <img :src="getAvatarUrl(reply.userId)" alt="Avatar" class="avatar" />
+            <h5>{{ reply.userId.username }}</h5>
+            <el-button
+              v-if="canDeleteReply(reply)"
+              type="danger"
+              @click="deleteReply(message._id, reply._id)"
+              >刪除回覆</el-button
+            >
+          </div>
+          <p :style="{ color: reply.textColor || '#000' }">{{ reply.message }}</p>
+        </el-card>
       </div>
     </el-card>
   </div>
@@ -103,6 +134,8 @@ const messages = reactive([])
 const userRole = ref('')
 const userId = ref('') // 保存當前用戶的 ID
 const likedMessages = ref([]) // 追踪已點讚的消息
+const replyFormVisible = reactive({})
+const replyMessage = reactive({})
 
 const likeMessage = async (id) => {
   try {
@@ -238,12 +271,31 @@ const deleteMessage = async (id) => {
   }
 }
 
+const deleteReply = async (messageId, replyId) => {
+  try {
+    console.log(`Deleting reply with messageId: ${messageId}, replyId: ${replyId}`)
+    await axios.delete(`http://localhost:3000/messages/${messageId}/replies/${replyId}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+    console.log('回覆已刪除')
+    fetchMessages()
+  } catch (error) {
+    console.error('刪除回覆失敗:', error)
+  }
+}
+
 const canDelete = (message) => {
   return userRole.value === 'admin' || message.userId._id === userId.value
 }
 
 const canEdit = (message) => {
   return message.userId._id === userId.value
+}
+
+const canDeleteReply = (reply) => {
+  return reply.userId._id === userId.value
 }
 
 const isEditing = reactive({})
@@ -277,6 +329,36 @@ const saveEdit = async (id, newMessage) => {
 
 const cancelEdit = (id) => {
   isEditing[id] = false
+}
+
+const submitReply = async (messageId) => {
+  const reply = replyMessage[messageId]
+  if (reply) {
+    try {
+      console.log('提交回覆:', { reply }) // 打印出请求体数据
+      await axios.post(
+        `http://localhost:3000/messages/${messageId}/replies`,
+        { reply }, // 发送的请求体
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      )
+      ElMessage.success('成功回覆')
+      replyMessage[messageId] = '' // 清空回复框
+      fetchMessages() // 更新消息列表
+    } catch (error) {
+      console.error('回覆失敗:', error)
+      ElMessage.error('回覆失敗')
+    }
+  } else {
+    ElMessage.warning('請輸入回覆訊息')
+  }
+}
+
+const toggleReplyForm = (messageId) => {
+  replyFormVisible[messageId] = !replyFormVisible[messageId]
 }
 
 const getAvatarUrl = (user) => {
@@ -328,5 +410,20 @@ onMounted(() => {
   height: 40px;
   border-radius: 50%;
   margin-right: 10px;
+}
+
+.reply-form {
+  margin-top: 10px;
+}
+
+.replies {
+  margin-top: 10px;
+}
+
+.reply-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
 }
 </style>

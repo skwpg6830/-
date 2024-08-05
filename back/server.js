@@ -19,8 +19,8 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, default: 'user' },
   gender: { type: String, required: true },
-  age: { type: String, required: true },  // 改為字符串類型
-  avatar: { type: String, required: true }  // 添加头像字段
+  age: { type: String, required: true },
+  avatar: { type: String, required: true }
 });
 
 const User = mongoose.model('User', userSchema);
@@ -30,11 +30,22 @@ const messageSchema = new mongoose.Schema({
   name: { type: String, required: true },
   message: { type: String, required: true },
   userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
-  textColor: { type: String, default: '#000' }, // 添加 textColor 属性
-  likes: { type: Number, default: 0 } // 添加 likes 屬性
+  textColor: { type: String, default: '#000' },
+  likes: { type: Number, default: 0 },
+  replies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Reply' }]
 });
 
 const Message = mongoose.model('Message', messageSchema);
+
+// 定義回覆
+const replySchema = new mongoose.Schema({
+  messageId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Message' },
+  userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
+  reply: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now }
+});
+
+const Reply = mongoose.model('Reply', replySchema);
 
 // 连接到 MongoDB
 mongoose.connect('mongodb://localhost:27017/newdatabase')
@@ -144,7 +155,13 @@ app.put('/messages/:id', authMiddleware, async (req, res) => {
 // 获取所有留言
 app.get('/messages', async (req, res) => {
   try {
-    const messages = await Message.find().populate('userId', 'username avatar gender');
+    const messages = await Message.find().populate('userId', 'username avatar gender').populate({
+      path: 'replies',
+      populate: {
+        path: 'userId',
+        select: 'username avatar gender'
+      }
+    });
     res.status(200).send(messages);
   } catch (error) {
     console.error('獲取留言失敗:', error);
@@ -152,8 +169,7 @@ app.get('/messages', async (req, res) => {
   }
 });
 
-
-// 點讚留言
+// 点赞留言
 app.post('/messages/:id/like', authMiddleware, async (req, res) => {
   try {
     const message = await Message.findById(req.params.id);
@@ -170,7 +186,7 @@ app.post('/messages/:id/like', authMiddleware, async (req, res) => {
   }
 });
 
-// 取消點讚留言
+// 取消点赞留言
 app.post('/messages/:id/unlike', authMiddleware, async (req, res) => {
   try {
     const message = await Message.findById(req.params.id);
@@ -189,7 +205,7 @@ app.post('/messages/:id/unlike', authMiddleware, async (req, res) => {
   }
 });
 
-
+// 获取用户信息
 app.get('/user', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
@@ -201,6 +217,76 @@ app.get('/user', authMiddleware, async (req, res) => {
     res.status(500).send('獲取用戶角色失敗');
   }
 });
+
+// 创建回复
+app.post('/messages/:id/replies', authMiddleware, async (req, res) => {
+  try {
+    const { reply } = req.body; // 检查接收的字段
+
+    if (!reply) {
+      return res.status(400).send('回覆内容是必须的');
+    }
+
+    const messageId = req.params.id;
+    const newReply = await Reply.create({ messageId, userId: req.user.userId, reply });
+    await Message.findByIdAndUpdate(messageId, { $push: { replies: newReply._id } });
+
+    res.status(201).send(newReply);
+  } catch (error) {
+    console.error('創建回覆失敗:', error);
+    res.status(500).send('創建回覆失敗');
+  }
+});
+
+
+// 获取特定留言的所有回复
+app.get('/messages/:id/replies', async (req, res) => {
+  try {
+    const messageId = req.params.id;
+    const replies = await Reply.find({ messageId }).populate('userId', 'username avatar gender');
+    res.status(200).send(replies);
+  } catch (error) {
+    console.error('獲取回覆失敗:', error);
+    res.status(500).send('獲取回覆失敗');
+  }
+});
+
+// 刪除回覆
+app.delete('/messages/:messageId/replies/:replyId', authMiddleware, async (req, res) => {
+  try {
+    const { messageId, replyId } = req.params;
+    console.log(`Received request to delete reply with messageId: ${messageId}, replyId: ${replyId}`);
+
+    const message = await Message.findById(messageId);
+    if (!message) {
+      console.log(`Message with id ${messageId} not found`);
+      return res.status(404).send('留言未找到');
+    }
+
+    const reply = await Reply.findById(replyId);
+    if (!reply) {
+      console.log(`Reply with id ${replyId} not found`);
+      return res.status(404).send('回覆未找到');
+    }
+
+    if (reply.userId.toString() !== req.user.userId && req.user.role !== 'admin') {
+      return res.status(403).send('無權限刪除該回覆');
+    }
+
+    await Reply.deleteOne({ _id: replyId });
+    message.replies = message.replies.filter((r) => r.toString() !== replyId);
+    await message.save();
+
+    res.status(200).send('回覆已刪除');
+  } catch (error) {
+    console.error('刪除回覆失敗:', error);
+    res.status(500).send('刪除回覆失敗');
+  }
+});
+
+
+
+
 
 // 全局错误处理
 app.use((err, req, res, next) => {
