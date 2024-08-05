@@ -3,8 +3,6 @@
     <el-row :gutter="20">
       <el-col>
         <div>
-          <authform @login-success="onLoginSuccess" />
-          <div v-if="isLoggedIn"></div>
           <el-carousel trigger="click" height="878px">
             <el-carousel-item v-for="item in items" :key="item.id">
               <img :src="item.image" alt="Carousel Image" />

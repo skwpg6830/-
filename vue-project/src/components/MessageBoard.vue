@@ -262,10 +262,12 @@ const deleteMessage = async (id) => {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     })
+    ElMessage.success('刪除成功')
     console.log('留言已刪除')
     fetchMessages()
   } catch (error) {
     console.error('刪除失敗:', error)
+    ElMessage.error('刪除失敗')
   }
 }
 
@@ -277,10 +279,12 @@ const deleteReply = async (messageId, replyId) => {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     })
+    ElMessage.success('刪除成功')
     console.log('回覆已刪除')
     fetchMessages()
   } catch (error) {
     console.error('刪除回覆失敗:', error)
+    ElMessage.error('刪除失敗')
   }
 }
 

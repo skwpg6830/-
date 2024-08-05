@@ -2,7 +2,7 @@
   <el-container class="container">
     <appheader class="header" @login="handleLogin" />
     <el-main class="main-content">
-      <maincontent v-if="!isLoggedIn" />
+      <maincontent />
     </el-main>
   </el-container>
 </template>
