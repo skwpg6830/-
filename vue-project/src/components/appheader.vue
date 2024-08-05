@@ -251,7 +251,7 @@ a {
 }
 
 .el-header {
-  background-color: #03a9f4;
+  background-color: #979d6e;
   height: 64px;
   display: flex;
   align-items: center;

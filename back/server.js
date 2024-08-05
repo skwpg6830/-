@@ -255,7 +255,7 @@ app.get('/messages/:id/replies', async (req, res) => {
 app.delete('/messages/:messageId/replies/:replyId', authMiddleware, async (req, res) => {
   try {
     const { messageId, replyId } = req.params;
-    console.log(`Received request to delete reply with messageId: ${messageId}, replyId: ${replyId}`);
+    
 
     const message = await Message.findById(messageId);
     if (!message) {

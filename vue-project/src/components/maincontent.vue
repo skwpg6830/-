@@ -43,7 +43,7 @@
         <h3>經濟損失</h3>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <el-card>
+        <el-card id="card">
           <template #header>
             <div class="card-header" style="text-align: center">
               <h4>農業方面損失</h4>
@@ -61,7 +61,7 @@
         </el-card>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <el-card>
+        <el-card id="card">
           <template #header>
             <div class="card-header" style="text-align: center">
               <h4>公共設施方面損失</h4>
@@ -83,7 +83,7 @@
         <h3>病媒傳播</h3>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <el-card>
+        <el-card id="card">
           <template #header>
             <div class="card-header" style="text-align: center">
               <h4>大鼠</h4>
@@ -101,7 +101,7 @@
         </el-card>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <el-card>
+        <el-card id="card">
           <template #header>
             <div class="card-header" style="text-align: center">
               <h4>鼬獾</h4>
@@ -122,7 +122,7 @@
         <h3>競爭資源</h3>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <el-card>
+        <el-card id="card">
           <template #header>
             <div class="card-header" style="text-align: center">
               <h4>白尾八哥</h4>
@@ -140,7 +140,7 @@
         </el-card>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <el-card>
+        <el-card id="card">
           <template #header>
             <div class="card-header" style="text-align: center">
               <h4>紅嘴藍鵲</h4>
@@ -383,12 +383,12 @@ h2 {
 
 h3 {
   text-align: center;
-  color: #2ed64b;
+  color: #4caf50;
   font-size: 30px;
 }
 
 h4 {
-  color: #03a9f4;
+  color: #1565c0;
   font-size: 25px;
 }
 
@@ -397,6 +397,10 @@ h4 {
   color: #fff;
   background-color: #1f1f1f;
   padding: 3rem;
+}
+
+#card {
+  background-color: #bb9a88;
 }
 
 img {
@@ -413,14 +417,14 @@ img {
   text-align: center;
   width: 100%;
   display: block;
-  color: #2ed64b;
+  color: #4caf50;
 }
 
 .box-card {
   border: 1px solid var(--el-border-color-dark);
   box-shadow: var(--el-box-shadow);
   color: #ff372e;
-  background: #fff176;
+  background: #bb9a88;
 }
 
 .el-carousel__item:nth-child(1) {

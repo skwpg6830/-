@@ -42,7 +42,7 @@ html,
 #app {
   height: 100%;
   margin: 0;
-  background-color: #e1f5fe;
+  background-color: #cac6bd;
   font-family: 'LXGW WenKai Mono TC', monospace;
 }
 
