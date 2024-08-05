@@ -77,9 +77,6 @@
         >
           保存
         </el-button>
-        <el-button v-if="isEditing[message._id]" type="info" @click="cancelEdit(message._id)">
-          取消
-        </el-button>
         <el-button type="info" @click="toggleReplyForm(message._id)">
           {{ replyFormVisible[message._id] ? '取消回覆' : '回覆' }}
         </el-button>
@@ -101,7 +98,7 @@
         >
           <div class="reply-header">
             <img :src="getAvatarUrl(reply.userId)" alt="Avatar" class="avatar" />
-            <h5>{{ reply.userId.username }}</h5>
+            <h5 class="username">{{ reply.userId.username }}</h5>
             <el-button
               v-if="canDeleteReply(reply)"
               type="danger"
@@ -109,7 +106,7 @@
               >刪除回覆</el-button
             >
           </div>
-          <p :style="{ color: reply.textColor || '#000' }">{{ reply.message }}</p>
+          <p :style="{ color: reply.textColor || '#000' }">{{ reply.reply }}</p>
         </el-card>
       </div>
     </el-card>
@@ -184,6 +181,7 @@ const fetchMessages = async () => {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     })
+    console.log(response.data) // 打印出返回的數據，檢查是否包含回覆
     messages.splice(
       0,
       messages.length,
@@ -327,10 +325,6 @@ const saveEdit = async (id, newMessage) => {
   }
 }
 
-const cancelEdit = (id) => {
-  isEditing[id] = false
-}
-
 const submitReply = async (messageId) => {
   const reply = replyMessage[messageId]
   if (reply) {
@@ -362,6 +356,9 @@ const toggleReplyForm = (messageId) => {
 }
 
 const getAvatarUrl = (user) => {
+  if (!user) {
+    return '' // 或者返回一個默認的 avatar URL
+  }
   if (user.avatar) {
     return user.avatar
   }
@@ -423,7 +420,10 @@ onMounted(() => {
 .reply-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 5px;
+}
+
+.username {
+  margin: 0;
+  margin-right: auto;
 }
 </style>
