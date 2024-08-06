@@ -91,13 +91,13 @@
     </el-dialog>
 
     <!-- 管理彈窗 -->
-    <el-dialog v-model="showManageDialog" title="查看申訴內容" style="text-align: center">
+    <el-dialog v-model="showManageDialog" title="申訴內容" style="text-align: center">
       <el-table :data="appeals">
-        <el-table-column prop="username" label="用戶名" width="150"></el-table-column>
-        <el-table-column prop="appealContent" label="申訴內容"></el-table-column>
+        <el-table-column prop="report" label="被檢舉者" width="150"></el-table-column>
+        <el-table-column prop="content" label="申訴內容"></el-table-column>
       </el-table>
       <template #footer>
-        <el-button @click="showManageDialog = false">關閉</el-button>
+        <el-button type="info" @click="showManageDialog = false">關閉</el-button>
       </template>
     </el-dialog>
   </el-header>
@@ -226,12 +226,13 @@ export default {
         const response = await axios.get('http://localhost:3000/appeals', {
           headers: { Authorization: `Bearer ${token}` }
         })
-        console.log('申訴資料:', response.data) // 添加日志检查返回数据
-        this.appeals = response.data
+        console.log('申訴資料:', response.data) // 确认数据返回正确
+        this.appeals = response.data // 确认状态正确更新
         this.showManageDialog = true
+        console.log('showManageDialog:', this.showManageDialog) // 确认对话框状态
       } catch (error) {
         ElMessage.error('無法加載申訴內容')
-        console.error('管理错误:', error) // 添加错误日志
+        console.error('管理错误:', error)
       }
     },
     checkLoginStatus() {
@@ -328,6 +329,10 @@ a {
   margin: 10px 0 0 10px;
   display: flex;
   align-items: center; /* 确保头像在垂直方向上居中 */
+}
+
+.el-dialog {
+  display: block !important;
 }
 
 @media (max-width: 768px) {
