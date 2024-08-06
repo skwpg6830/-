@@ -33,7 +33,8 @@
         <img :src="getAvatarUrl(message.userId)" alt="Avatar" class="avatar" />
         <h4>{{ message.userId.username }}</h4>
       </div>
-      <h5>{{ message.name }}</h5>
+      <h5 v-if="!isEditing[message._id]">{{ message.name }}</h5>
+      <el-input v-else v-model="message.editName" placeholder="請編輯討論的主題" />
       <p v-if="!isEditing[message._id]" :style="{ color: message.textColor || '#000' }">
         {{ message.message }}
       </p>
@@ -43,7 +44,13 @@
         v-model="message.editMessage"
         placeholder="請編輯訊息"
         rows="4"
-        :style="{ color: message.textColor || '#000' }"
+        :style="{ color: message.editTextColor || '#000' }"
+      />
+      <el-color-picker
+        v-if="isEditing[message._id]"
+        v-model="message.editTextColor"
+        show-alpha
+        :predefine="predefinedColors"
       />
       <div class="message-actions">
         <el-button
@@ -66,25 +73,30 @@
         <el-button
           v-if="canEdit(message) && !isEditing[message._id]"
           type="primary"
-          @click="startEditing(message._id, message.message)"
+          @click="startEditing(message._id, message.name, message.message, message.textColor)"
         >
           編輯
         </el-button>
         <el-button
           v-if="isEditing[message._id]"
           type="success"
-          @click="saveEdit(message._id, message.editMessage)"
+          @click="
+            saveEdit(message._id, message.editName, message.editMessage, message.editTextColor)
+          "
         >
           保存
         </el-button>
+
         <el-button type="info" @click="toggleReplyForm(message._id)">
           {{ replyFormVisible[message._id] ? '取消回覆' : '回覆' }}
         </el-button>
       </div>
       <div v-if="replyFormVisible[message._id]" class="reply-form">
+        <!-- 監聽Enter按鍵事件 -->
         <el-input
           type="textarea"
           v-model="replyMessage[message._id]"
+          @keyup.enter="submitReply(message._id)"
           placeholder="請輸入回覆訊息"
           rows="3"
         />
@@ -185,7 +197,12 @@ const fetchMessages = async () => {
     messages.splice(
       0,
       messages.length,
-      ...response.data.map((message) => ({ ...message, editMessage: message.message }))
+      ...response.data.map((message) => ({
+        ...message,
+        editName: message.name,
+        editMessage: message.message,
+        editTextColor: message.textColor
+      }))
     )
     console.log('獲取留言成功')
   } catch (error) {
@@ -247,9 +264,9 @@ const handleSubmit = async () => {
       }
     }
   } else {
-    console.warn('請輸入您的姓名和訊息')
+    console.warn('請輸入討論的主題和訊息')
     ElMessage({
-      message: '請輸入您的姓名和訊息',
+      message: '請輸入討論的主題和訊息',
       type: 'warning'
     })
   }
@@ -302,19 +319,21 @@ const canDeleteReply = (reply) => {
 
 const isEditing = reactive({})
 
-const startEditing = (id, messageContent) => {
+const startEditing = (id, name, messageContent, textColor) => {
   isEditing[id] = true
   const message = messages.find((message) => message._id === id)
   if (message) {
+    message.editName = name
     message.editMessage = messageContent
+    message.editTextColor = textColor
   }
 }
 
-const saveEdit = async (id, newMessage) => {
+const saveEdit = async (id, newName, newMessage, newTextColor) => {
   try {
     await axios.put(
       `http://localhost:3000/messages/${id}`,
-      { message: newMessage },
+      { name: newName, message: newMessage, textColor: newTextColor },
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`

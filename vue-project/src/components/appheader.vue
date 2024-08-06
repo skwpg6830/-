@@ -78,10 +78,10 @@
     <el-dialog v-model="showLoginDialog" title="登入" style="text-align: center">
       <el-form :model="loginForm">
         <el-form-item label="帳號">
-          <el-input v-model="loginForm.username"></el-input>
+          <el-input v-model="loginForm.username" @keyup.enter="login"></el-input>
         </el-form-item>
         <el-form-item label="密碼">
-          <el-input type="password" v-model="loginForm.password"></el-input>
+          <el-input type="password" v-model="loginForm.password" @keyup.enter="login"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>

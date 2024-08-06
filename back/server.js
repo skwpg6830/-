@@ -141,23 +141,35 @@ app.delete('/messages/:id', authMiddleware, async (req, res) => {
 // 編輯留言
 app.put('/messages/:id', authMiddleware, async (req, res) => {
   try {
-    const message = await Message.findById(req.params.id);
-    if (!message) {
+    const { name, message, textColor } = req.body;
+    const messageToUpdate = await Message.findById(req.params.id);
+
+    if (!messageToUpdate) {
       return res.status(404).send('留言不存在');
     }
 
-    if (message.userId.toString() !== req.user.userId) {
+    if (messageToUpdate.userId.toString() !== req.user.userId) {
       return res.status(403).send('無權編輯此留言');
     }
 
-    message.message = req.body.message;
-    await message.save();
-    res.status(200).send(message);
+    if (name !== undefined) {
+      messageToUpdate.name = name;
+    }
+    if (message !== undefined) {
+      messageToUpdate.message = message;
+    }
+    if (textColor !== undefined) {
+      messageToUpdate.textColor = textColor;
+    }
+
+    await messageToUpdate.save();
+    res.status(200).send(messageToUpdate);
   } catch (error) {
     console.error('編輯留言失敗:', error);
     res.status(500).send('編輯留言失敗');
   }
 });
+
 
 // 获取所有留言
 app.get('/messages', async (req, res) => {
