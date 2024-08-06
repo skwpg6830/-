@@ -274,37 +274,8 @@
     </el-row>
     <el-row>
       <el-col :span="24" :xs="24">
-        <h2 id="material">資料彙整</h2>
-        <a
-          style="display: flex; justify-content: center"
-          href="https://conservation.forest.gov.tw/aspropaganda"
-          target="_blank"
-          >農業部林業及自然保育署自然保育網</a
-        >
-        <a
-          style="display: flex; justify-content: center"
-          href="https://taicol.tw/zh-hant/catalogue?alien_type=invasive&date=&keyword=&name-select=contain&date-select=gl&page=1"
-          target="_blank"
-          >台灣物種名錄</a
-        >
-        <a
-          style="display: flex; justify-content: center"
-          href="https://smctw.tw/16404/"
-          target="_blank"
-          >台灣科技媒體中心</a
-        >
-        <a
-          style="display: flex; justify-content: center"
-          href="https://gisd.biodiv.tw/taiwan_add_1.php"
-          target="_blank"
-          >全球入侵種資料庫</a
-        >
-        <a
-          style="display: flex; justify-content: center"
-          href="http://www.swan.org.tw/docdir/AZPH9O21Q4.pdf"
-          target="_blank"
-          >台灣十大外來入侵物種</a
-        >
+        <h2 id="Appeal">申訴專區</h2>
+        <AppealForm />
       </el-col>
       <!-- 使用 AuthForm 組件 -->
       <AuthForm />
@@ -318,12 +289,14 @@ import { ref, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import AuthForm from '@/components/authform.vue'
 import MessageBoard from './MessageBoard.vue'
+import AppealForm from './appealForm.vue'
 
 export default {
   name: 'MainContent',
   components: {
     AuthForm,
-    MessageBoard
+    MessageBoard,
+    AppealForm
   },
   setup() {
     const store = useStore()

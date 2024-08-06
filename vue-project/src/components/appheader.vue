@@ -20,7 +20,7 @@
       <el-menu-item index="1"><a href="#condition" class="red-text">面臨現狀</a></el-menu-item>
       <el-menu-item index="2"><a href="#countermeasures" class="red-text">對策</a></el-menu-item>
       <el-menu-item index="3"><a href="#conversation" class="red-text">交流專區</a></el-menu-item>
-      <el-menu-item index="4"><a href="#material" class="red-text">資料彙整</a></el-menu-item>
+      <el-menu-item index="4"><a href="#Appeal" class="red-text">申訴專區</a></el-menu-item>
       <div class="flex-grow"></div>
       <el-menu-item v-if="!isLoggedIn" index="5" @click="showRegisterDialog = true">
         <a class="red-text">註冊</a>
