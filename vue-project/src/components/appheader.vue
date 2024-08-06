@@ -28,7 +28,7 @@
       <el-menu-item v-if="!isLoggedIn" index="6" @click="showLoginDialog = true">
         <a class="red-text">登入</a>
       </el-menu-item>
-      <el-menu-item v-if="isAdmin" index="7" @click="manage">
+      <el-menu-item v-if="isAdmin" index="7" @click="showManageDialog = true">
         <a class="red-text">管理</a>
       </el-menu-item>
       <el-menu-item v-if="isLoggedIn" index="8" @click="logout">
@@ -89,6 +89,17 @@
         <el-button type="primary" @click="login">登入</el-button>
       </template>
     </el-dialog>
+
+    <!-- 管理彈窗 -->
+    <el-dialog v-model="showManageDialog" title="查看申訴" style="text-align: center">
+      <el-table :data="appeals">
+        <el-table-column prop="username" label="用戶名" width="150"></el-table-column>
+        <el-table-column prop="appealContent" label="申訴內容"></el-table-column>
+      </el-table>
+      <template #footer>
+        <el-button @click="showManageDialog = false">關閉</el-button>
+      </template>
+    </el-dialog>
   </el-header>
 </template>
 
@@ -112,6 +123,7 @@ export default {
       isMobile: window.innerWidth <= 768,
       showRegisterDialog: false,
       showLoginDialog: false,
+      showManageDialog: false,
       registerForm: {
         username: '',
         password: '',
@@ -127,7 +139,8 @@ export default {
       isHeaderHidden: false,
       lastScrollY: 0,
       isAdmin: false,
-      userAvatar: ''
+      userAvatar: '',
+      appeals: [] // 添加申訴數據
     }
   },
   methods: {
@@ -204,8 +217,14 @@ export default {
       this.$emit('login', false)
       ElMessage.success('登出成功')
     },
-    manage() {
-      console.log('進入管理頁面')
+    async manage() {
+      try {
+        const response = await axios.get('http://localhost:3000/appeals')
+        this.appeals = response.data
+        this.showManageDialog = true
+      } catch (error) {
+        ElMessage.error('無法加載申訴內容')
+      }
     },
     checkLoginStatus() {
       const token = localStorage.getItem('token')
