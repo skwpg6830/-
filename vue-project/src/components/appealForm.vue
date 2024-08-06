@@ -42,23 +42,25 @@ export default {
         appealType: [{ required: true, message: '請選擇申訴類型', trigger: 'change' }],
         report: [{ required: true, message: '請輸入被檢舉者用戶名', trigger: 'blur' }],
         content: [{ required: true, message: '請輸入申訴內容', trigger: 'blur' }]
-      }
+      },
+      isSubmitting: false
     }
   },
   methods: {
     async submitAppeal() {
       try {
-        const token = localStorage.getItem('token') // 假設 token 儲存在 localStorage
+        const token = localStorage.getItem('token')
+        if (!token) {
+          ElMessage.error('未登录或登录已过期')
+          return
+        }
         await axios.post('http://localhost:3000/appeals', this.appealForm, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         })
         ElMessage.success('申訴提交成功')
-        // 清空表單
-        this.appealForm.appealType = ''
-        this.appealForm.report = ''
-        this.appealForm.content = ''
+        this.resetForm() // 这里重置表单，但不显示重置成功的消息
       } catch (error) {
         ElMessage.error('申訴提交失敗')
         console.error('申訴提交失敗:', error)
@@ -66,7 +68,6 @@ export default {
     },
     resetForm() {
       this.$refs.appealForm.resetFields()
-      ElMessage.success('重置成功')
     }
   }
 }
