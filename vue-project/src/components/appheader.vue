@@ -28,7 +28,7 @@
       <el-menu-item v-if="!isLoggedIn" index="6" @click="showLoginDialog = true">
         <a class="red-text">登入</a>
       </el-menu-item>
-      <el-menu-item v-if="isAdmin" index="7" @click="showManageDialog = true">
+      <el-menu-item v-if="isAdmin" index="7" @click="manage">
         <a class="red-text">管理</a>
       </el-menu-item>
       <el-menu-item v-if="isLoggedIn" index="8" @click="logout">
@@ -91,7 +91,7 @@
     </el-dialog>
 
     <!-- 管理彈窗 -->
-    <el-dialog v-model="showManageDialog" title="查看申訴" style="text-align: center">
+    <el-dialog v-model="showManageDialog" title="查看申訴內容" style="text-align: center">
       <el-table :data="appeals">
         <el-table-column prop="username" label="用戶名" width="150"></el-table-column>
         <el-table-column prop="appealContent" label="申訴內容"></el-table-column>
@@ -166,7 +166,6 @@ export default {
           age: this.registerForm.age
         })
         ElMessage.success('註冊成功')
-        // 根據性別設置默認頭像
         if (this.registerForm.gender === 'male') {
           this.userAvatar = maleAvatar
         } else if (this.registerForm.gender === 'female') {
@@ -191,7 +190,6 @@ export default {
         const response = await axios.post('http://localhost:3000/login', this.loginForm)
         const token = response.data.token
         localStorage.setItem('token', token)
-        // 解碼 token 並檢查角色
         const decodedToken = JSON.parse(atob(token.split('.')[1]))
         this.isAdmin = decodedToken.role === 'admin'
         this.isLoggedIn = true
@@ -219,11 +217,21 @@ export default {
     },
     async manage() {
       try {
-        const response = await axios.get('http://localhost:3000/appeals')
+        const token = localStorage.getItem('token')
+        if (!token) {
+          ElMessage.error('沒有有效的登入資訊')
+          return
+        }
+
+        const response = await axios.get('http://localhost:3000/appeals', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        console.log('申訴資料:', response.data) // 添加日志检查返回数据
         this.appeals = response.data
         this.showManageDialog = true
       } catch (error) {
         ElMessage.error('無法加載申訴內容')
+        console.error('管理错误:', error) // 添加错误日志
       }
     },
     checkLoginStatus() {

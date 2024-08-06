@@ -21,18 +21,13 @@ router.post('/', async (req, res) => {
     }
   });
 
-// 获取所有申诉
-router.get('/', async (req, res) => {
+// 获取所有申诉（仅管理员）
+router.get('/appeals', authMiddleware, async (req, res) => {
     try {
-      if (req.user.role !== 'admin') {
-        return res.status(403).send('無權查看申訴');
-      }
-  
-      const appeals = await Appeal.find().populate('userId', 'username avatar gender');
-      res.status(200).send(appeals);
+      const appeals = await Appeal.find();
+      res.json(appeals);
     } catch (error) {
-      console.error('獲取申訴失敗:', error);
-      res.status(500).send('獲取申訴失敗');
+      res.status(500).json({ message: error.message });
     }
   });
   
