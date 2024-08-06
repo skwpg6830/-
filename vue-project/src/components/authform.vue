@@ -1,3 +1,6 @@
+<template>
+  <div></div>
+</template>
 <script>
 import axios from 'axios'
 
@@ -87,10 +90,6 @@ export default {
         this.isLoggedIn = false
         this.isAdmin = false
       }
-    },
-    manage() {
-      // 添加你的管理界面邏輯
-      this.$emit('manage', '管理功能啟動')
     }
   },
   created() {

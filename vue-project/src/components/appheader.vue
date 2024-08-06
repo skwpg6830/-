@@ -175,6 +175,7 @@ export default {
         }
         this.showRegisterDialog = false
         this.checkLoginStatus()
+        window.location.reload() // 添加刷新
       } catch (error) {
         if (error.response) {
           ElMessage.error(`伺服器錯誤回應: ${error.response.data}`)
@@ -197,6 +198,7 @@ export default {
         this.showLoginDialog = false
         this.$emit('login', true)
         ElMessage.success('登入成功')
+        window.location.reload() // 添加刷新
       } catch (error) {
         if (error.response) {
           ElMessage.error(`伺服器錯誤回應: ${error.response.data}`)
@@ -214,6 +216,7 @@ export default {
       this.userAvatar = ''
       this.$emit('login', false)
       ElMessage.success('登出成功')
+      window.location.reload() // 添加刷新
     },
     async manage() {
       try {
