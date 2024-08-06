@@ -3,17 +3,30 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const axios = require('axios');
-const authMiddleware = require('./middleware/auth');
+const path = require('path');
+const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
+const authMiddleware = require('./middleware/auth'); // 確保路徑正確
+const appealsRouter = require('./routes/appeals');
+
+dotenv.config();
+
 const app = express();
 const SECRET_KEY = 'your_secret_key';
-const path = require('path');
 
 app.use(express.json());
 app.use(cors());
 app.use('/path/to/default-avatar.png', express.static(path.join(__dirname, 'public/images')));
 
-// 定義用戶
+// 連接到 MongoDB
+mongoose.connect('mongodb://localhost:27017/newdatabase', {
+}).then(() => {
+  console.log('成功連接到 MongoDB');
+}).catch((error) => {
+  console.error('無法連接到 MongoDB', error);
+});
+
+// 定義用戶模式和模型
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
@@ -23,9 +36,9 @@ const userSchema = new mongoose.Schema({
   avatar: { type: String, required: true }
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 
-// 定義留言
+// 定義留言模式和模型
 const messageSchema = new mongoose.Schema({
   name: { type: String, required: true },
   message: { type: String, required: true },
@@ -35,9 +48,12 @@ const messageSchema = new mongoose.Schema({
   replies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Reply' }]
 });
 
-const Message = mongoose.model('Message', messageSchema);
+const Message = mongoose.models.Message || mongoose.model('Message', messageSchema);
 
-// 定義回覆
+// 引入 Appeal 模型
+const Appeal = require('./models/Appeal');
+
+// 定義回覆模式和模型
 const replySchema = new mongoose.Schema({
   messageId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Message' },
   userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
@@ -45,16 +61,7 @@ const replySchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-const Reply = mongoose.model('Reply', replySchema);
-
-// 连接到 MongoDB
-mongoose.connect('mongodb://localhost:27017/newdatabase')
-  .then(() => {
-    console.log('成功連接到 MongoDB');
-  })
-  .catch((error) => {
-    console.error('無法連接到 MongoDB', error);
-  });
+const Reply = mongoose.models.Reply || mongoose.model('Reply', replySchema);
 
 // 用戶註冊
 app.post('/register', async (req, res) => {
@@ -238,7 +245,6 @@ app.post('/messages/:id/replies', authMiddleware, async (req, res) => {
   }
 });
 
-
 // 获取特定留言的所有回复
 app.get('/messages/:id/replies', async (req, res) => {
   try {
@@ -255,7 +261,6 @@ app.get('/messages/:id/replies', async (req, res) => {
 app.delete('/messages/:messageId/replies/:replyId', authMiddleware, async (req, res) => {
   try {
     const { messageId, replyId } = req.params;
-    
 
     const message = await Message.findById(messageId);
     if (!message) {
@@ -284,69 +289,10 @@ app.delete('/messages/:messageId/replies/:replyId', authMiddleware, async (req, 
   }
 });
 
-const appealSchema = new mongoose.Schema({
-  appealType: { type: String, required: true },
-  report: { type: String, required: true },
-  content: { type: String, required: true },
-  userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
-  createdAt: { type: Date, default: Date.now }
-});
-
-const Appeal = mongoose.model('Appeal', appealSchema);
-
-// 提交申诉
-app.post('/appeals', authMiddleware, async (req, res) => {
-  try {
-    const { appealType, report, content } = req.body;
-    const userId = req.user.userId;
-
-    if (!appealType || !report || !content) {
-      return res.status(400).send('所有字段均为必填');
-    }
-
-    const newAppeal = await Appeal.create({ appealType, report, content, userId });
-    console.log('New Appeal Created:', newAppeal);  // 添加日志
-    res.status(201).send(newAppeal);
-  } catch (error) {
-    console.error('提交申诉失败:', error);
-    res.status(500).send('提交申诉失败');
-  }
-});
+// 使用新創建的路由
+app.use('/appeals', authMiddleware, appealsRouter);
 
 
-// 获取所有申诉
-app.get('/appeals', authMiddleware, async (req, res) => {
-  try {
-    if (req.user.role !== 'admin') {
-      return res.status(403).send('無權查看申訴');
-    }
-
-    const appeals = await Appeal.find().populate('userId', 'username avatar gender');
-    console.log(appeals);  // 添加日志以检查查询结果
-    res.status(200).send(appeals);
-  } catch (error) {
-    console.error('獲取申訴失敗:', error);
-    res.status(500).send('獲取申訴失敗');
-  }
-});
-
-
-// 获取特定用户的申诉
-app.get('/appeals/user/:userId', authMiddleware, async (req, res) => {
-  try {
-    const userId = req.params.userId;
-
-    if (req.user.userId !== userId && req.user.role !== 'admin') {
-      return res.status(403).send('无权限查看该用户的申诉');
-    }
-
-    const appeals = await Appeal.find({ userId }).populate('userId', 'username avatar gender');
-    res.status(200).send(appeals);
-  } catch (error) {
-    console.error('获取用户申诉失败:', error);
-    res.status(500).send('获取用户申诉失败');
-  }
-});
 
 // 全局错误处理
 app.use((err, req, res, next) => {

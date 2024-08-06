@@ -1,37 +1,39 @@
 <template>
   <el-form
-    :model="form"
+    :model="appealForm"
     :rules="rules"
     ref="appealForm"
     label-width="120px"
     class="form-with-border"
   >
     <el-form-item label="申訴類型" prop="appealType">
-      <el-select v-model="form.appealType" placeholder="請選擇">
+      <el-select v-model="appealForm.appealType" placeholder="請選擇">
         <el-option label="謾罵" value="謾罵"></el-option>
         <el-option label="騷擾" value="騷擾"></el-option>
         <el-option label="偏離主題" value="偏離主題"></el-option>
       </el-select>
     </el-form-item>
     <el-form-item label="被檢舉者" prop="report">
-      <el-input v-model="form.report"></el-input>
+      <el-input v-model="appealForm.report"></el-input>
     </el-form-item>
     <el-form-item label="申訴內容" prop="content">
-      <el-input type="textarea" v-model="form.content"></el-input>
+      <el-input type="textarea" v-model="appealForm.content"></el-input>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="submitForm">提交</el-button>
+      <el-button type="primary" @click="submitAppeal">提交</el-button>
       <el-button @click="resetForm">重置</el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script>
+import axios from 'axios'
 import { ElMessage } from 'element-plus'
 export default {
+  name: 'Appeal',
   data() {
     return {
-      form: {
+      appealForm: {
         appealType: '',
         report: '',
         content: ''
@@ -44,18 +46,23 @@ export default {
     }
   },
   methods: {
-    submitForm() {
-      this.$refs.appealForm.validate((valid) => {
-        if (valid) {
-          // 處理表單提交邏輯，如向伺服器發送數據
-          console.log('提交成功:', this.form)
-          ElMessage.success('提交成功')
-        } else {
-          console.log('表單驗證失敗')
-          ElMessage.error('提交失敗')
-          return false
-        }
-      })
+    async submitAppeal() {
+      try {
+        const token = localStorage.getItem('token') // 假設 token 儲存在 localStorage
+        await axios.post('http://localhost:3000/appeals', this.appealForm, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        ElMessage.success('申訴提交成功')
+        // 清空表單
+        this.appealForm.appealType = ''
+        this.appealForm.report = ''
+        this.appealForm.content = ''
+      } catch (error) {
+        ElMessage.error('申訴提交失敗')
+        console.error('申訴提交失敗:', error)
+      }
     },
     resetForm() {
       this.$refs.appealForm.resetFields()
