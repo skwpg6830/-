@@ -16,144 +16,165 @@
         <h2 id="condition">面臨現狀</h2>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <img src="../assets/面臨現狀.png" />
+        <div data-aos="fade-right" data-aos-offset="300" data-aos-easing="ease-in-sine">
+          <img src="../assets/面臨現狀.png" />
+        </div>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <div style="font-size: 18px" class="text-center">
-          <p>
-            生物多樣性和生態系統服務政府間科學政策平台（Intergovernmental Science-Policy Platform on
-            Biodiversity and Ecosystem Services），
-            簡稱IPBES，是一個由不同國家的政府部門一同成立的國際機構。IPBES於2012年由94個成員國成立，目前共有近140個成員國。IPBES也與多個組織、民間團體、科學家、學術研究機構合作，
-            以當前已知與生物多樣性、生態系統對人類相關貢獻（如糧食生產）的最佳科學知識為基礎，提供決策者制定與實施相關政策可參考的科學評估。<br />
-            根據IPBES與國際自然保育聯盟（IUCN）的定義：<br />
-            1.外來入侵種：是指動物、植物或其他生命體，無論有意還是無意，被人為引入到非牠們原本自然棲息的環境，而且已經威脅到原生的生物多樣性、生態系統、糧食安全、人類的經濟、健康和福祉。<br />
-            2.外來種：意思是指一個物種因為逃逸、引入或散播到不是牠原本自然分布的棲息環境中。但是外來種不一定都會對原生的生態造成負面影響，也不是所有外來種都有辦法在野外自行繁殖，例如台灣的浣熊。若外來種在非原生的環境中可以自行繁衍，但還沒有擴大族群到威脅原生物種、或像入侵種影響生態的程度，可以稱為歸化種。<br />
-            3.入侵種：指的是物種的生存擴大到已經對原生的生態系造成影響，如果這個造成負面影響的物種不是原本生態內的生物，就稱為「外來入侵種」。IPBES今年的報告指的主要是外來入侵種。<br />
-            但是當地的原生物種也可能成為入侵種，當牠們數量增加或擴大族群範圍到變成有入侵性，且在特定的地區內威脅到原生物種的生存，會成為某個地區的入侵種，稱為「國內外來種」或「本土入侵種」。
-            例如，以台灣西北部棲地為主的白頭翁，因為被人為放生到花東地區，而影響當地的台灣特有種烏頭翁的生存，造成原生的純種烏頭翁數量銳減。
-            以台灣的情況，根據農業部2004年增修公告的優先防治、長期管理、觀察、監測或評估中之21種入侵種生物清單，
-            包含入侵種紅火蟻、蘇鐵白輪盾介殼蟲、小花蔓澤蘭、緬甸小鼠、松材線蟲、中國梨木蝨、福壽螺、河殼菜蛤、布袋蓮、多線南蜥、刺桐釉小蜂
-            、香澤蘭、銀合歡、豬草、沙氏變色蜥、亞洲錦蛙、白尾八哥、輝椋鳥、琵琶鼠、魚虎、美洲螯蝦。台灣近期常常聽到的外來種生物，還有斑腿樹蛙、埃及聖䴉、綠鬣蜥、俗稱巴西龜的紅耳泥龜等。
-          </p>
+        <div
+          data-aos="fade-left"
+          data-aos-anchor="#example-anchor"
+          data-aos-offset="500"
+          data-aos-duration="3000"
+        >
+          <div style="font-size: 18px" class="text-center">
+            <p>
+              生物多樣性和生態系統服務政府間科學政策平台（Intergovernmental Science-Policy Platform
+              on Biodiversity and Ecosystem Services），
+              簡稱IPBES，是一個由不同國家的政府部門一同成立的國際機構。IPBES於2012年由94個成員國成立，目前共有近140個成員國。IPBES也與多個組織、民間團體、科學家、學術研究機構合作，
+              以當前已知與生物多樣性、生態系統對人類相關貢獻（如糧食生產）的最佳科學知識為基礎，提供決策者制定與實施相關政策可參考的科學評估。<br />
+              根據IPBES與國際自然保育聯盟（IUCN）的定義：<br />
+              1.外來入侵種：是指動物、植物或其他生命體，無論有意還是無意，被人為引入到非牠們原本自然棲息的環境，而且已經威脅到原生的生物多樣性、生態系統、糧食安全、人類的經濟、健康和福祉。<br />
+              2.外來種：意思是指一個物種因為逃逸、引入或散播到不是牠原本自然分布的棲息環境中。但是外來種不一定都會對原生的生態造成負面影響，也不是所有外來種都有辦法在野外自行繁殖，例如台灣的浣熊。若外來種在非原生的環境中可以自行繁衍，但還沒有擴大族群到威脅原生物種、或像入侵種影響生態的程度，可以稱為歸化種。<br />
+              3.入侵種：指的是物種的生存擴大到已經對原生的生態系造成影響，如果這個造成負面影響的物種不是原本生態內的生物，就稱為「外來入侵種」。IPBES今年的報告指的主要是外來入侵種。<br />
+              但是當地的原生物種也可能成為入侵種，當牠們數量增加或擴大族群範圍到變成有入侵性，且在特定的地區內威脅到原生物種的生存，會成為某個地區的入侵種，稱為「國內外來種」或「本土入侵種」。
+              例如，以台灣西北部棲地為主的白頭翁，因為被人為放生到花東地區，而影響當地的台灣特有種烏頭翁的生存，造成原生的純種烏頭翁數量銳減。
+              以台灣的情況，根據農業部2004年增修公告的優先防治、長期管理、觀察、監測或評估中之21種入侵種生物清單，
+              包含入侵種紅火蟻、蘇鐵白輪盾介殼蟲、小花蔓澤蘭、緬甸小鼠、松材線蟲、中國梨木蝨、福壽螺、河殼菜蛤、布袋蓮、多線南蜥、刺桐釉小蜂
+              、香澤蘭、銀合歡、豬草、沙氏變色蜥、亞洲錦蛙、白尾八哥、輝椋鳥、琵琶鼠、魚虎、美洲螯蝦。台灣近期常常聽到的外來種生物，還有斑腿樹蛙、埃及聖䴉、綠鬣蜥、俗稱巴西龜的紅耳泥龜等。
+            </p>
+          </div>
         </div>
       </el-col>
       <el-col :span="24" :xs="24">
         <h3>經濟損失</h3>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <el-card id="card">
-          <template #header>
-            <div class="card-header" style="text-align: center">
-              <h4>農業方面損失</h4>
-            </div>
-          </template>
-          <p>
-            一項2004年的調查發現，1979年首度引進臺灣的福壽螺，短短25年間已造成51億元的農業經濟損失，若加上政府與農民每年投入的防治費用，損失金額更直逼100億元。
-          </p>
-          <p>
-            農民每年每公頃投入防治福壽螺的金額平均約2,100元，若不採取任何防治措施，每年每公頃平均損失將高達2.3萬元;當防治措施沒有做好時，福壽螺危害臺灣農業生態環境所造成的無形損失為新臺幣51億元。
-          </p>
-          <template #footer
-            ><img src="../assets/農業方面損失.jpg" /> <img src="../assets/農業方面損失2.jpeg"
-          /></template>
-        </el-card>
+        <div data-aos="fade-left" data-aos-offset="300" data-aos-easing="ease-in-sine">
+          <el-card id="card">
+            <template #header>
+              <div class="card-header" style="text-align: center">
+                <h4>農業方面損失</h4>
+              </div>
+            </template>
+            <p>
+              一項2004年的調查發現，1979年首度引進臺灣的福壽螺，短短25年間已造成51億元的農業經濟損失，若加上政府與農民每年投入的防治費用，損失金額更直逼100億元。
+            </p>
+            <p>
+              農民每年每公頃投入防治福壽螺的金額平均約2,100元，若不採取任何防治措施，每年每公頃平均損失將高達2.3萬元;當防治措施沒有做好時，福壽螺危害臺灣農業生態環境所造成的無形損失為新臺幣51億元。
+            </p>
+            <template #footer
+              ><img src="../assets/農業方面損失.jpg" /> <img src="../assets/農業方面損失2.jpeg"
+            /></template>
+          </el-card>
+        </div>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <el-card id="card">
-          <template #header>
-            <div class="card-header" style="text-align: center">
-              <h4>公共設施方面損失</h4>
-            </div>
-          </template>
-          <p>
-            入侵紅火蟻常被發現在電氣設備內築巢，像是電錶、變電箱、電纜線箱等，因為來自南美溫暖大草原的入侵紅火蟻喜歡溫暖的環境，電路設備的內部溫度偏高，恰巧是陰暗的密閉空間，正好成為入侵紅火蟻築巢的最佳選擇。
-          </p>
-          <p>
-            而在電氣設備中的入侵紅火蟻經常會咬壞電線，造成電線設備的短路及損壞，除了維護上的成本外，就連清除成本也是一筆不小的開銷，每年造成的經濟損失非常之可觀。
-          </p>
-          <template #footer
-            ><img src="../assets/公共設施方面損失.png" />
-            <img src="../assets/公共設施方面損失2.png"
-          /></template>
-        </el-card>
+        <div data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="2000">
+          <el-card id="card">
+            <template #header>
+              <div class="card-header" style="text-align: center">
+                <h4>公共設施方面損失</h4>
+              </div>
+            </template>
+            <p>
+              入侵紅火蟻常被發現在電氣設備內築巢，像是電錶、變電箱、電纜線箱等，因為來自南美溫暖大草原的入侵紅火蟻喜歡溫暖的環境，電路設備的內部溫度偏高，恰巧是陰暗的密閉空間，正好成為入侵紅火蟻築巢的最佳選擇。
+            </p>
+            <p>
+              而在電氣設備中的入侵紅火蟻經常會咬壞電線，造成電線設備的短路及損壞，除了維護上的成本外，就連清除成本也是一筆不小的開銷，每年造成的經濟損失非常之可觀。
+            </p>
+            <template #footer
+              ><img src="../assets/公共設施方面損失.png" />
+              <img src="../assets/公共設施方面損失2.png"
+            /></template>
+          </el-card>
+        </div>
       </el-col>
       <el-col :span="24" :xs="24">
         <h3>病媒傳播</h3>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <el-card id="card">
-          <template #header>
-            <div class="card-header" style="text-align: center">
-              <h4>大鼠</h4>
-            </div>
-          </template>
-          <p>
-            鼠類因為生活習性的關係，長期活動於較骯髒且容易受汙染的場所，如：水溝、地下道、菜市場…等地方，因此身上帶原傳染病的機會高上許多！
-          </p>
-          <p>
-            透過老鼠作為媒介的疾病包括：漢他病毒、拉薩病毒、沙狀病毒、鼠疫、鼠咬熱、沙門氏桿菌、鉤端螺旋體、地方性斑疹傷寒、弓蟲、焦蟲、包膜絛蟲、阿米巴原蟲…等。
-          </p>
-          <template #footer
-            ><img src="../assets/老鼠.png" /> <img src="../assets/老鼠2.png"
-          /></template>
-        </el-card>
+        <div data-aos="fade-right">
+          <el-card id="card">
+            <template #header>
+              <div class="card-header" style="text-align: center">
+                <h4>大鼠</h4>
+              </div>
+            </template>
+            <p>
+              鼠類因為生活習性的關係，長期活動於較骯髒且容易受汙染的場所，如：水溝、地下道、菜市場…等地方，因此身上帶原傳染病的機會高上許多！
+            </p>
+            <p>
+              透過老鼠作為媒介的疾病包括：漢他病毒、拉薩病毒、沙狀病毒、鼠疫、鼠咬熱、沙門氏桿菌、鉤端螺旋體、地方性斑疹傷寒、弓蟲、焦蟲、包膜絛蟲、阿米巴原蟲…等。
+            </p>
+            <template #footer
+              ><img src="../assets/老鼠.png" /> <img src="../assets/老鼠2.png"
+            /></template>
+          </el-card>
+        </div>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <el-card id="card">
-          <template #header>
-            <div class="card-header" style="text-align: center">
-              <h4>鼬獾</h4>
-            </div>
-          </template>
-          <p>
-            鼬獾是鼬獾屬四種動物的一種正如大部分哺乳類，鼬獾也可能成為狂犬病宿主。遭感染並發病之鼬獾，會有異於其生態習性的行為產生，需特別注意。
-          </p>
-          <p>
-            遇到鼬獾時請與之保持安全距離，勿接觸或餵食，避免被感染，罹患狂犬病的鼬獾會在2到3週內發病，症狀會較為狂躁，一旦發病就會邁向死亡。
-          </p>
-          <template #footer
-            ><img src="../assets/鼬獾.jpg" /> <img src="../assets/鼬獾2.jpg"
-          /></template>
-        </el-card>
+        <div data-aos="fade-left">
+          <el-card id="card">
+            <template #header>
+              <div class="card-header" style="text-align: center">
+                <h4>鼬獾</h4>
+              </div>
+            </template>
+            <p>
+              鼬獾是鼬獾屬四種動物的一種正如大部分哺乳類，鼬獾也可能成為狂犬病宿主。遭感染並發病之鼬獾，會有異於其生態習性的行為產生，需特別注意。
+            </p>
+            <p>
+              遇到鼬獾時請與之保持安全距離，勿接觸或餵食，避免被感染，罹患狂犬病的鼬獾會在2到3週內發病，症狀會較為狂躁，一旦發病就會邁向死亡。
+            </p>
+            <template #footer
+              ><img src="../assets/鼬獾.jpg" /> <img src="../assets/鼬獾2.jpg"
+            /></template>
+          </el-card>
+        </div>
       </el-col>
       <el-col :span="24" :xs="24">
         <h3>競爭資源</h3>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <el-card id="card">
-          <template #header>
-            <div class="card-header" style="text-align: center">
-              <h4>白尾八哥</h4>
-            </div>
-          </template>
-          <p>
-            白尾八哥早年作為寵物鳥引入臺灣，除了籠中逸鳥，宗教放生更是助長其族群擴散。在野外最早的紀錄為1978年，從2013年開始族群急遽增加。
-          </p>
-          <p>
-            白尾八哥的到來使得本土的野生麻雀遭受嚴重損失，有人目睹白尾八哥捕食麻雀幼雛，因兩種鳥類棲地重疊，白尾八哥體型上又較大，侵略性及地域性也強，所以遇到較弱小的就會去啄食。
-          </p>
-          <template #footer
-            ><img src="../assets/白尾八哥.jpg" /> <img src="../assets/白尾八哥2.jpg"
-          /></template>
-        </el-card>
+        <div data-aos="zoom-in-right">
+          <el-card id="card">
+            <template #header>
+              <div class="card-header" style="text-align: center">
+                <h4>白尾八哥</h4>
+              </div>
+            </template>
+            <p>
+              白尾八哥早年作為寵物鳥引入臺灣，除了籠中逸鳥，宗教放生更是助長其族群擴散。在野外最早的紀錄為1978年，從2013年開始族群急遽增加。
+            </p>
+            <p>
+              白尾八哥的到來使得本土的野生麻雀遭受嚴重損失，有人目睹白尾八哥捕食麻雀幼雛，因兩種鳥類棲地重疊，白尾八哥體型上又較大，侵略性及地域性也強，所以遇到較弱小的就會去啄食。
+            </p>
+            <template #footer
+              ><img src="../assets/白尾八哥.jpg" /> <img src="../assets/白尾八哥2.jpg"
+            /></template>
+          </el-card>
+        </div>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <el-card id="card">
-          <template #header>
-            <div class="card-header" style="text-align: center">
-              <h4>紅嘴藍鵲</h4>
-            </div>
-          </template>
-          <p>
-            紅嘴藍鵲又稱中國藍鵲，分布於喜馬拉雅山脈、印度東北部、中國、緬甸及印度支那，這種鳥的飛行能力既不算強，本身亦無遷徙的習性，按理說是不該出現在台灣地區，近年來卻時而聽到關於牠們出沒的風聲。
-          </p>
-          <p>
-            紅嘴藍鵲無論是習性、飲食或適合棲地等各方面的生存條件，皆與本土的台灣藍鵲相似，因此牠的出現也意味著領域競爭的威脅，長期下來有可能導致台灣藍鵲族群銳減、甚至絕滅。
-          </p>
-          <template #footer
-            ><img src="../assets/紅嘴藍鵲.jpg" /> <img src="../assets/紅嘴藍鵲2.jpg"
-          /></template>
-        </el-card>
+        <div data-aos="zoom-in-right">
+          <el-card id="card">
+            <template #header>
+              <div class="card-header" style="text-align: center">
+                <h4>紅嘴藍鵲</h4>
+              </div>
+            </template>
+            <p>
+              紅嘴藍鵲又稱中國藍鵲，分布於喜馬拉雅山脈、印度東北部、中國、緬甸及印度支那，這種鳥的飛行能力既不算強，本身亦無遷徙的習性，按理說是不該出現在台灣地區，近年來卻時而聽到關於牠們出沒的風聲。
+            </p>
+            <p>
+              紅嘴藍鵲無論是習性、飲食或適合棲地等各方面的生存條件，皆與本土的台灣藍鵲相似，因此牠的出現也意味著領域競爭的威脅，長期下來有可能導致台灣藍鵲族群銳減、甚至絕滅。
+            </p>
+            <template #footer
+              ><img src="../assets/紅嘴藍鵲.jpg" /> <img src="../assets/紅嘴藍鵲2.jpg"
+            /></template>
+          </el-card>
+        </div>
       </el-col>
     </el-row>
     <el-row>
@@ -290,6 +311,10 @@ import { useStore } from 'vuex'
 import AuthForm from '@/components/authform.vue'
 import MessageBoard from './MessageBoard.vue'
 import AppealForm from './appealForm.vue'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+
+AOS.init()
 
 export default {
   name: 'MainContent',

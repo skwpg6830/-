@@ -225,17 +225,20 @@ export default {
           ElMessage.error('沒有有效的登入資訊')
           return
         }
-
-        const response = await axios.get('http://localhost:3000/appeals', {
+        console.log('Token:', token)
+        const config = {
           headers: { Authorization: `Bearer ${token}` }
-        })
-        console.log('申訴資料:', response.data) // 确认数据返回正确
-        this.appeals = response.data // 确认状态正确更新
+        }
+        console.log('Config:', config)
+
+        const response = await axios.get('http://localhost:3000/appeals', config)
+        console.log('申訴資料:', response.data) // 確認數據返回正確
+        this.appeals = response.data // 確認狀態正確更新
         this.showManageDialog = true
-        console.log('showManageDialog:', this.showManageDialog) // 确认对话框状态
+        console.log('showManageDialog:', this.showManageDialog) // 確認對話框狀態
       } catch (error) {
         ElMessage.error('無法加載申訴內容')
-        console.error('管理错误:', error)
+        console.error('管理錯誤:', error)
       }
     },
     checkLoginStatus() {

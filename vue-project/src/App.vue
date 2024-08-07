@@ -2,6 +2,7 @@
   <el-container class="container">
     <appheader class="header" @login="handleLogin" />
     <el-main class="main-content">
+      <div class="flair flair--3"></div>
       <maincontent />
     </el-main>
   </el-container>
@@ -10,6 +11,7 @@
 <script>
 import AppHeader from './components/appheader.vue'
 import MainContent from './components/maincontent.vue'
+import { gsap } from 'gsap'
 
 export default {
   name: 'App',
@@ -31,6 +33,20 @@ export default {
       localStorage.removeItem('token')
       this.handleLogin(false) // 確保登出後重新渲染
     }
+  },
+  mounted() {
+    // 設置初始狀態
+    gsap.set('.flair', { xPercent: -50, yPercent: -50 })
+
+    // 監聽鼠標移動事件，更新.flair 元素的位置
+    window.addEventListener('mousemove', (e) => {
+      gsap.to('.flair', {
+        x: e.clientX,
+        y: e.clientY,
+        duration: 0.6,
+        ease: 'power3'
+      })
+    })
   }
 }
 </script>
@@ -44,6 +60,7 @@ html,
   margin: 0;
   background-color: #cac6bd;
   font-family: 'LXGW WenKai Mono TC', monospace;
+  cursor: none;
 }
 
 .container {
@@ -65,5 +82,23 @@ html,
   padding-top: 64px; /* 根據上方高度调整 */
   padding-bottom: 64px; /* 根據下方高度调整 */
   position: relative; /* 確保子元素能夠正確定位 */
+}
+
+.flair {
+  width: 20px;
+  height: 20px;
+  position: fixed;
+  top: 0;
+  left: -1%;
+  pointer-events: none;
+  background: url(/src/assets/鼠標.png) no-repeat center;
+  background-size: cover;
+  z-index: 9999;
+}
+
+@media (min-width: 769px) {
+  .flair {
+    left: -0.2%;
+  }
 }
 </style>
