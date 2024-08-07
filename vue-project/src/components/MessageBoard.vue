@@ -26,7 +26,7 @@
   <div
     v-for="(message, index) in messages"
     :key="message._id"
-    :class="['message-card', { 'alternate-bg': index % 2 === 0 }]"
+    :class="['message-card', index % 2 === 0 ? 'even' : 'odd']"
   >
     <el-card :style="{ color: message.textColor || '#000' }">
       <div class="message-header">
@@ -124,7 +124,6 @@
     </el-card>
   </div>
 </template>
-
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
 import axios from 'axios'
@@ -411,8 +410,12 @@ onMounted(() => {
   border-radius: 5px;
 }
 
-.alternate-bg {
-  background-color: #97946e; /* 替換為所需的交替背景顏色 */
+.message-card.even {
+  background-color: #b5a8a0;
+}
+
+.message-card.odd {
+  background-color: #cac6bd;
 }
 
 .el-card {

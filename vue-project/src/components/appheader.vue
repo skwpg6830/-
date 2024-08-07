@@ -2,7 +2,7 @@
   <el-header :class="{ hidden: isHeaderHidden }">
     <el-row :gutter="30" align="middle">
       <el-col :span="20" :lg="24" :xs="28">
-        <a href="#"><img src="../assets/logo.png" /></a>
+        <a href="#"><img class="logo" src="../assets/logo.png" /></a>
       </el-col>
       <el-col :span="4" :xs="2" class="menu-toggle-col">
         <el-icon class="menu-toggle" @click="toggleMenu">
@@ -310,7 +310,8 @@ a {
 .menu-toggle {
   display: none;
   cursor: pointer;
-  color: #2ed64b; /* 更改此處以改變圖標顏色 */
+  margin-top: 10px;
+  color: #f3efdd; /* 更改此處以改變圖標顏色 */
 }
 
 .el-menu-demo {
@@ -349,7 +350,6 @@ a {
 
 @media (max-width: 768px) {
   .el-header {
-    background-color: #03a9f4;
     height: 64px;
     display: block;
   }
@@ -357,6 +357,10 @@ a {
   .menu-toggle {
     display: block;
     font-size: 24px;
+  }
+
+  .logo {
+    margin-top: 2.5%;
   }
 
   .el-menu-demo {
