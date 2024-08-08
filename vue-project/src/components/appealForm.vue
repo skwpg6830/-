@@ -59,7 +59,7 @@ export default {
           this.isSubmitting = true
           const token = localStorage.getItem('token')
           if (!token) {
-            ElMessage.error('未登录或登录已过期')
+            ElMessage.error('未登陸或登陸已過期')
             return
           }
 

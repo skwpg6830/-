@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const SECRET_KEY = process.env.SECRET_KEY || 'your_secret_key';  // 确保这个密钥一致
+const SECRET_KEY = process.env.SECRET_KEY || 'your_secret_key';
 
 const authMiddleware = (req, res, next) => {
     const authHeader = req.header('Authorization');

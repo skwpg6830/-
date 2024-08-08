@@ -51,30 +51,15 @@ const messageSchema = new mongoose.Schema({
 
 const Message = mongoose.model('Message', messageSchema);
 
-// 引入 Appeal 模型
-const Appeal = require('./models/Appeal');
-
-// 定義提交申訴的路由
-app.post('/appeals', authMiddleware, async (req, res) => {
-  try {
-    const { appealType, report, content } = req.body;
-    if (!appealType || !report || !content) {
-      return res.status(400).send('所有字段都是必填的');
-    }
-
-    const newAppeal = await Appeal.create({
-      userId: req.user.userId,
-      appealType,
-      report,
-      content
-    });
-    res.status(201).send(newAppeal);
-  } catch (error) {
-    console.error('創建申訴失敗:', error);
-    res.status(500).send('創建申訴失敗');
-  }
+// 定義申訴模式和模型
+const appealSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
+  appealType: { type: String, required: true },
+  report: { type: String, required: true },
+  content: { type: String, required: true }
 });
 
+const Appeal = mongoose.model('Appeal', appealSchema);
 
 // 定義回覆模式和模型
 const replySchema = new mongoose.Schema({
@@ -203,7 +188,7 @@ app.put('/messages/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// 获取所有留言
+// 獲取所有留言
 app.get('/messages', async (req, res) => {
   try {
     const messages = await Message.find().populate('userId', 'username avatar gender').populate({
@@ -220,8 +205,8 @@ app.get('/messages', async (req, res) => {
   }
 });
 
-// 点赞留言
-app.post('/messages/:id/like', authMiddleware, async (req, res, next) => {
+// 點讚留言
+app.post('/messages/:id/like', authMiddleware, async (req, res) => {
   try {
     const message = await Message.findById(req.params.id);
     if (!message) {
@@ -230,51 +215,31 @@ app.post('/messages/:id/like', authMiddleware, async (req, res, next) => {
 
     message.likes += 1;
     await message.save();
-    res.status(200).send({ likes: message.likes });
+
+    res.status(200).send(message);
   } catch (error) {
-    next(error);
-    console.error('點讚失敗:', error);
-    res.status(500).send('點讚失敗');
+    console.error('點讚失败:', error);
+    res.status(500).send('點讚失败');
   }
 });
 
-// 取消点赞留言
-app.post('/messages/:id/unlike', authMiddleware, async (req, res, next) => {
+// 獲取用戶
+app.get('/user-role/:userId', authMiddleware, async (req, res) => {
   try {
-    const message = await Message.findById(req.params.id);
-    if (!message) {
-      return res.status(404).send('留言不存在');
-    }
-
-    if (message.likes > 0) {
-      message.likes -= 1;
-      await message.save();
-    }
-    res.status(200).send({ likes: message.likes });
-  } catch (error) {
-    next(error);
-    console.error('取消點讚失敗:', error);
-    res.status(500).send('取消點讚失敗');
-  }
-});
-
-// 获取用户信息
-app.get('/user', authMiddleware, async (req, res) => {
-  try {
-    const user = await User.findById(req.user.userId);
+    const user = await User.findById(req.params.userId);
     if (!user) {
       return res.status(404).send('用戶未找到');
     }
     res.send({ role: user.role, userId: user._id, avatar: user.avatar, gender: user.gender });
   } catch (error) {
-    res.status(500).send('獲取用戶角色失敗');
+    res.status(500).send('獲取用戶失敗');
   }
 });
 
-// 创建回复
+// 創建回覆
 app.post('/messages/:id/replies', authMiddleware, async (req, res, next) => {
   try {
-    const { reply } = req.body; // 检查接收的字段
+    const { reply } = req.body; // 檢查接收的字段
 
     if (!reply) {
       return res.status(400).send('回覆内容是必须的');
@@ -292,7 +257,7 @@ app.post('/messages/:id/replies', authMiddleware, async (req, res, next) => {
   }
 });
 
-// 获取特定留言的所有回复
+// 獲取特定留言的所有回覆
 app.get('/messages/:id/replies', async (req, res) => {
   try {
     const messageId = req.params.id;
@@ -336,10 +301,31 @@ app.delete('/messages/:messageId/replies/:replyId', authMiddleware, async (req, 
   }
 });
 
-// 获取所有申诉
+// 定義提交申訴的路由
+app.post('/appeals', authMiddleware, async (req, res) => {
+  try {
+    const { appealType, report, content } = req.body;
+    if (!appealType || !report || !content) {
+      return res.status(400).send('所有字段都是必填的');
+    }
+
+    const newAppeal = await Appeal.create({
+      userId: req.user.userId,
+      appealType,
+      report,
+      content
+    });
+    res.status(201).send(newAppeal);
+  } catch (error) {
+    console.error('創建申訴失敗:', error);
+    res.status(500).send('創建申訴失敗');
+  }
+});
+
+// 獲取所有申訴
 app.get('/appeals', authMiddleware, async (req, res) => {
   try {
-    const appeals = await Appeal.find();
+    const appeals = await Appeal.find().populate('userId', 'username').exec();
     res.status(200).send(appeals);
   } catch (error) {
     console.error('獲取申訴失敗:', error);
@@ -347,13 +333,21 @@ app.get('/appeals', authMiddleware, async (req, res) => {
   }
 });
 
-// 全局错误处理
+// 刪除申訴
+app.delete('/appeals/:id', authMiddleware, async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Appeal.findByIdAndDelete(id);
+    res.status(200).send({ message: '申訴已刪除' });
+  } catch (error) {
+    res.status(500).send({ message: '無法刪除申訴', error });
+  }
+});
+
+// 處理錯誤的中間件
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  if (err.name === 'ValidationError') {
-    return res.status(400).send(err.message);
-  }
-  res.status(500).send('服务器內部錯誤');
+  res.status(500).send('伺服器錯誤');
 });
 
 // 啟動服務器

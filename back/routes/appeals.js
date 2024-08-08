@@ -9,19 +9,19 @@ router.post('/', async (req, res) => {
     const userId = req.user.userId;
   
     if (!appealType || !report || !content) {
-      return res.status(400).send('所有字段均为必填');
+      return res.status(400).send('所有字段均為必填');
     }
   
     try {
       const newAppeal = await Appeal.create({ appealType, report, content, userId });
       res.status(201).send(newAppeal);
     } catch (error) {
-      console.error('提交申诉失败:', error);
-      res.status(500).send('提交申诉失败');
+      console.error('提交申訴失败:', error);
+      res.status(500).send('提交申訴失败');
     }
   });
 
-// 获取所有申诉（仅管理员）
+// 獲取所有申訴（僅管理员）
 router.get('/appeals', authMiddleware, async (req, res) => {
     try {
       const appeals = await Appeal.find();
@@ -32,7 +32,7 @@ router.get('/appeals', authMiddleware, async (req, res) => {
   });
   
 
-// 获取特定用户的申诉
+// 獲取特定用戶的申訴
 router.get('/user/:userId', authMiddleware, async (req, res) => {
   try {
     const userId = req.params.userId;

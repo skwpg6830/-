@@ -91,10 +91,18 @@
     </el-dialog>
 
     <!-- 管理彈窗 -->
-    <el-dialog v-model="showManageDialog" title="申訴內容" style="text-align: center">
+    <el-dialog v-model="showManageDialog" title="申訴內容" style="text-align: center" width="100%">
       <el-table :data="appeals">
+        <el-table-column prop="userId.username" label="申訴者" width="150"></el-table-column>
         <el-table-column prop="report" label="被檢舉者" width="150"></el-table-column>
         <el-table-column prop="content" label="申訴內容"></el-table-column>
+        <el-table-column label="操作" width="120">
+          <template #default="scope">
+            <el-button type="danger" size="small" @click="deleteAppeal(scope.row._id)"
+              >刪除</el-button
+            >
+          </template>
+        </el-table-column>
       </el-table>
       <template #footer>
         <el-button type="info" @click="showManageDialog = false">關閉</el-button>
@@ -177,7 +185,7 @@ export default {
         this.checkLoginStatus()
         setTimeout(function () {
           window.location.reload()
-        }, 500) //延遲0.5秒刷新頁面
+        }, 300) // 延遲0.3秒刷新頁面
       } catch (error) {
         if (error.response) {
           ElMessage.error(`伺服器錯誤回應: ${error.response.data}`)
@@ -202,7 +210,7 @@ export default {
         ElMessage.success('登入成功')
         setTimeout(function () {
           window.location.reload()
-        }, 500) //延遲0.5秒刷新頁面
+        }, 300) // 延遲0.3秒刷新頁面
       } catch (error) {
         ElMessage.error(`登入失敗: ${error.message}`)
       }
@@ -216,7 +224,7 @@ export default {
       ElMessage.success('登出成功')
       setTimeout(function () {
         window.location.reload()
-      }, 500) //延遲0.5秒刷新頁面
+      }, 300) //延遲0.3秒刷新頁面
     },
     async manage() {
       try {
@@ -235,6 +243,25 @@ export default {
         this.showManageDialog = true
       } catch (error) {
         ElMessage.error('無法加載申訴內容')
+      }
+    },
+    async deleteAppeal(id) {
+      try {
+        const token = localStorage.getItem('token')
+        if (!token) {
+          ElMessage.error('沒有有效的登入資訊')
+          return
+        }
+
+        const config = {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+
+        await axios.delete(`http://localhost:3000/appeals/${id}`, config)
+        this.appeals = this.appeals.filter((appeal) => appeal._id !== id)
+        ElMessage.success('申訴已刪除')
+      } catch (error) {
+        ElMessage.error('無法刪除申訴')
       }
     },
     checkLoginStatus() {
@@ -331,7 +358,7 @@ a {
 .user-avatar {
   margin: 10px 0 0 10px;
   display: flex;
-  align-items: center; /* 确保头像在垂直方向上居中 */
+  align-items: center; /* 确保頭像在垂直方向上居中 */
 }
 
 .el-dialog {

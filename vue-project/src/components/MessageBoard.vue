@@ -351,10 +351,10 @@ const submitReply = async (messageId) => {
   const reply = replyMessage[messageId]
   if (reply) {
     try {
-      console.log('提交回覆:', { reply }) // 打印出请求体数据
+      console.log('提交回覆:', { reply }) // 打印出請求數據
       await axios.post(
         `http://localhost:3000/messages/${messageId}/replies`,
-        { reply }, // 发送的请求体
+        { reply }, // 發送的請求
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -362,7 +362,7 @@ const submitReply = async (messageId) => {
         }
       )
       ElMessage.success('成功回覆')
-      replyMessage[messageId] = '' // 清空回复框
+      replyMessage[messageId] = '' // 清空回覆框
       fetchMessages() // 更新消息列表
     } catch (error) {
       console.error('回覆失敗:', error)
