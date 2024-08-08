@@ -6,25 +6,26 @@ const cors = require('cors');
 const path = require('path');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
-const authMiddleware = require('./middleware/auth'); // 確保路徑正確
-const appealsRouter = require('./routes/appeals');
+const authMiddleware = require('./middleware/auth');
 
 dotenv.config();
 
 const app = express();
-const SECRET_KEY = 'your_secret_key';
+const port = 3000;
+const SECRET_KEY = process.env.SECRET_KEY || 'your_secret_key';
 
 app.use(express.json());
 app.use(cors());
 app.use('/path/to/default-avatar.png', express.static(path.join(__dirname, 'public/images')));
 
 // 連接到 MongoDB
-mongoose.connect('mongodb://localhost:27017/newdatabase', {
-}).then(() => {
-  console.log('成功連接到 MongoDB');
-}).catch((error) => {
-  console.error('無法連接到 MongoDB', error);
-});
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/newdatabase')
+  .then(() => {
+    console.log('成功連接到 MongoDB');
+  })
+  .catch((error) => {
+    console.error('無法連接到 MongoDB', error);
+  });
 
 // 定義用戶模式和模型
 const userSchema = new mongoose.Schema({
@@ -36,7 +37,7 @@ const userSchema = new mongoose.Schema({
   avatar: { type: String, required: true }
 });
 
-const User = mongoose.models.User || mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
 
 // 定義留言模式和模型
 const messageSchema = new mongoose.Schema({
@@ -48,10 +49,32 @@ const messageSchema = new mongoose.Schema({
   replies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Reply' }]
 });
 
-const Message = mongoose.models.Message || mongoose.model('Message', messageSchema);
+const Message = mongoose.model('Message', messageSchema);
 
 // 引入 Appeal 模型
 const Appeal = require('./models/Appeal');
+
+// 定義提交申訴的路由
+app.post('/appeals', authMiddleware, async (req, res) => {
+  try {
+    const { appealType, report, content } = req.body;
+    if (!appealType || !report || !content) {
+      return res.status(400).send('所有字段都是必填的');
+    }
+
+    const newAppeal = await Appeal.create({
+      userId: req.user.userId,
+      appealType,
+      report,
+      content
+    });
+    res.status(201).send(newAppeal);
+  } catch (error) {
+    console.error('創建申訴失敗:', error);
+    res.status(500).send('創建申訴失敗');
+  }
+});
+
 
 // 定義回覆模式和模型
 const replySchema = new mongoose.Schema({
@@ -61,12 +84,15 @@ const replySchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-const Reply = mongoose.models.Reply || mongoose.model('Reply', replySchema);
+const Reply = mongoose.model('Reply', replySchema);
 
 // 用戶註冊
-app.post('/register', async (req, res) => {
+app.post('/register', async (req, res, next) => {
   try {
     const { username, password, gender, age } = req.body;
+    if (!username || !password || !gender || !age) {
+      return res.status(400).send('所有字段都是必填的');
+    }
 
     const existingUser = await User.findOne({ username });
     if (existingUser) {
@@ -75,19 +101,24 @@ app.post('/register', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const avatar = gender === 'male' ? 'path/to/male-avatar.jpg' : 'path/to/female-avatar.jpg';
-
     const newUser = await User.create({ username, password: hashedPassword, gender, age, avatar });
+
     res.status(201).send(newUser);
   } catch (error) {
+    next(error);
     console.error('註冊失敗:', error);
     res.status(500).send('註冊失敗');
   }
 });
 
 // 登陸
-app.post('/login', async (req, res) => {
+app.post('/login', async (req, res, next) => {
   try {
     const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).send('用戶名和密碼是必填的');
+    }
+
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(400).send('用戶不存在');
@@ -101,18 +132,20 @@ app.post('/login', async (req, res) => {
     const token = jwt.sign({ userId: user._id, role: user.role, avatar: user.avatar, gender: user.gender }, SECRET_KEY, { expiresIn: '1h' });
     res.status(200).send({ token, userId: user._id, avatar: user.avatar, gender: user.gender });
   } catch (error) {
+    next(error);
     console.error('登錄錯誤:', error);
     res.status(500).send('登陸失敗');
   }
 });
 
 // 創建留言
-app.post('/messages', authMiddleware, async (req, res) => {
+app.post('/messages', authMiddleware, async (req, res, next) => {
   const { name, message, textColor } = req.body;
   try {
     const newMessage = await Message.create({ name, message, textColor, userId: req.user.userId });
     res.status(201).send(newMessage);
   } catch (error) {
+    next(error);
     console.error('創建留言失敗:', error);
     res.status(500).send('創建留言失敗');
   }
@@ -170,7 +203,6 @@ app.put('/messages/:id', authMiddleware, async (req, res) => {
   }
 });
 
-
 // 获取所有留言
 app.get('/messages', async (req, res) => {
   try {
@@ -189,7 +221,7 @@ app.get('/messages', async (req, res) => {
 });
 
 // 点赞留言
-app.post('/messages/:id/like', authMiddleware, async (req, res) => {
+app.post('/messages/:id/like', authMiddleware, async (req, res, next) => {
   try {
     const message = await Message.findById(req.params.id);
     if (!message) {
@@ -200,13 +232,14 @@ app.post('/messages/:id/like', authMiddleware, async (req, res) => {
     await message.save();
     res.status(200).send({ likes: message.likes });
   } catch (error) {
+    next(error);
     console.error('點讚失敗:', error);
     res.status(500).send('點讚失敗');
   }
 });
 
 // 取消点赞留言
-app.post('/messages/:id/unlike', authMiddleware, async (req, res) => {
+app.post('/messages/:id/unlike', authMiddleware, async (req, res, next) => {
   try {
     const message = await Message.findById(req.params.id);
     if (!message) {
@@ -219,6 +252,7 @@ app.post('/messages/:id/unlike', authMiddleware, async (req, res) => {
     }
     res.status(200).send({ likes: message.likes });
   } catch (error) {
+    next(error);
     console.error('取消點讚失敗:', error);
     res.status(500).send('取消點讚失敗');
   }
@@ -238,7 +272,7 @@ app.get('/user', authMiddleware, async (req, res) => {
 });
 
 // 创建回复
-app.post('/messages/:id/replies', authMiddleware, async (req, res) => {
+app.post('/messages/:id/replies', authMiddleware, async (req, res, next) => {
   try {
     const { reply } = req.body; // 检查接收的字段
 
@@ -252,6 +286,7 @@ app.post('/messages/:id/replies', authMiddleware, async (req, res) => {
 
     res.status(201).send(newReply);
   } catch (error) {
+    next(error);
     console.error('創建回覆失敗:', error);
     res.status(500).send('創建回覆失敗');
   }
@@ -301,18 +336,27 @@ app.delete('/messages/:messageId/replies/:replyId', authMiddleware, async (req, 
   }
 });
 
-// 使用新創建的路由
-app.use('/appeals', authMiddleware, appealsRouter);
-
-
+// 获取所有申诉
+app.get('/appeals', authMiddleware, async (req, res) => {
+  try {
+    const appeals = await Appeal.find();
+    res.status(200).send(appeals);
+  } catch (error) {
+    console.error('獲取申訴失敗:', error);
+    res.status(500).send('獲取申訴失敗');
+  }
+});
 
 // 全局错误处理
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+  if (err.name === 'ValidationError') {
+    return res.status(400).send(err.message);
+  }
+  res.status(500).send('服务器內部錯誤');
 });
 
 // 啟動服務器
-app.listen(3000, () => {
-  console.log('伺服器成功啟動 3000');
+app.listen(port, () => {
+  console.log(`伺服器成功啟動 ${port}`);
 });

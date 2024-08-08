@@ -29,6 +29,7 @@
 <script>
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
+
 export default {
   name: 'Appeal',
   data() {
@@ -48,23 +49,51 @@ export default {
   },
   methods: {
     async submitAppeal() {
-      try {
-        const token = localStorage.getItem('token')
-        if (!token) {
-          ElMessage.error('未登录或登录已过期')
+      this.$refs.appealForm.validate(async (valid) => {
+        if (!valid) {
+          ElMessage.error('表單驗證失敗，請檢查輸入')
           return
         }
-        await axios.post('http://localhost:3000/appeals', this.appealForm, {
-          headers: {
-            Authorization: `Bearer ${token}`
+
+        try {
+          this.isSubmitting = true
+          const token = localStorage.getItem('token')
+          if (!token) {
+            ElMessage.error('未登录或登录已过期')
+            return
           }
-        })
-        ElMessage.success('申訴提交成功')
-        this.resetForm() // 这里重置表单，但不显示重置成功的消息
-      } catch (error) {
-        ElMessage.error('申訴提交失敗')
-        console.error('申訴提交失敗:', error)
-      }
+
+          const response = await axios.post(
+            'http://localhost:3000/appeals',
+            {
+              appealType: this.appealForm.appealType,
+              report: this.appealForm.report,
+              content: this.appealForm.content
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            }
+          )
+
+          if (response.status === 201 || response.status === 200) {
+            ElMessage.success('申訴提交成功')
+            this.resetForm()
+          } else {
+            throw new Error('申訴提交失敗')
+          }
+        } catch (error) {
+          if (error.response && error.response.data) {
+            ElMessage.error(`申訴提交失敗: ${error.response.data}`)
+          } else {
+            ElMessage.error('申訴提交失敗')
+          }
+          console.error('申訴提交失敗:', error)
+        } finally {
+          this.isSubmitting = false
+        }
+      })
     },
     resetForm() {
       this.$refs.appealForm.resetFields()

@@ -177,7 +177,7 @@ export default {
         this.checkLoginStatus()
         setTimeout(function () {
           window.location.reload()
-        }, 2000) //延遲2秒刷新頁面
+        }, 500) //延遲0.5秒刷新頁面
       } catch (error) {
         if (error.response) {
           ElMessage.error(`伺服器錯誤回應: ${error.response.data}`)
@@ -202,15 +202,9 @@ export default {
         ElMessage.success('登入成功')
         setTimeout(function () {
           window.location.reload()
-        }, 2000) //延遲2秒刷新頁面
+        }, 500) //延遲0.5秒刷新頁面
       } catch (error) {
-        if (error.response) {
-          ElMessage.error(`伺服器錯誤回應: ${error.response.data}`)
-        } else if (error.request) {
-          ElMessage.error('沒有收到伺服器回應')
-        } else {
-          ElMessage.error(`登入失敗: ${error.message}`)
-        }
+        ElMessage.error(`登入失敗: ${error.message}`)
       }
     },
     logout() {
@@ -222,7 +216,7 @@ export default {
       ElMessage.success('登出成功')
       setTimeout(function () {
         window.location.reload()
-      }, 2000) //延遲2秒刷新頁面
+      }, 500) //延遲0.5秒刷新頁面
     },
     async manage() {
       try {
@@ -231,20 +225,16 @@ export default {
           ElMessage.error('沒有有效的登入資訊')
           return
         }
-        console.log('Token:', token)
+
         const config = {
           headers: { Authorization: `Bearer ${token}` }
         }
-        console.log('Config:', config)
 
         const response = await axios.get('http://localhost:3000/appeals', config)
-        console.log('申訴資料:', response.data) // 確認數據返回正確
-        this.appeals = response.data // 確認狀態正確更新
+        this.appeals = response.data
         this.showManageDialog = true
-        console.log('showManageDialog:', this.showManageDialog) // 確認對話框狀態
       } catch (error) {
         ElMessage.error('無法加載申訴內容')
-        console.error('管理錯誤:', error)
       }
     },
     checkLoginStatus() {
