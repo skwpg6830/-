@@ -167,6 +167,7 @@ const likeMessage = async (id) => {
 
 const unlikeMessage = async (id) => {
   try {
+    // console.log(`取消點讚的 URL: http://localhost:3000/messages/${id}/unlike`)
     await axios.post(
       `http://localhost:3000/messages/${id}/unlike`,
       {},
@@ -217,10 +218,8 @@ const fetchUserRole = async () => {
       }
     })
     userRole.value = response.data.role
-    userId.value = response.data.userId // 從 response 中獲取用戶 ID
-    console.log('用戶角色和ID:', userRole.value, userId.value)
+    userId.value = response.data.userId // 确保这里的 userId 正确赋值
   } catch (error) {
-    console.error('獲取用戶角色失敗:', error)
     if (error.response && error.response.status === 400) {
       console.error('請求錯誤，請檢查請求格式或內容')
     }
@@ -305,11 +304,17 @@ const deleteReply = async (messageId, replyId) => {
 }
 
 const canDelete = (message) => {
-  return userRole.value === 'admin' || message.userId._id === userId.value
+  // console.log(`Current userId: ${userId.value}, message ownerId: ${message.userId._id}`)
+  const result = userRole.value === 'admin' || message.userId._id === userId.value
+  // console.log(`Checking canDelete: ${result} for message ${message._id}`)
+  return result
 }
 
 const canEdit = (message) => {
-  return message.userId._id === userId.value
+  // console.log(`Current userId: ${userId.value}, message ownerId: ${message.userId._id}`)
+  const result = message.userId._id === userId.value
+  // console.log(`Checking canEdit: ${result} for message ${message._id}`)
+  return result
 }
 
 const canDeleteReply = (reply) => {

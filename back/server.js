@@ -141,20 +141,23 @@ app.delete('/messages/:id', authMiddleware, async (req, res) => {
   try {
     const message = await Message.findById(req.params.id);
     if (!message) {
-      return res.status(404).send('留言不存在');
+      return res.status(404).json({ message: 'Message not found' });
     }
 
-    if (req.user.role === 'admin' || message.userId.toString() === req.user.userId) {
-      await Message.findByIdAndDelete(req.params.id);
-      res.status(200).send('留言已删除');
-    } else {
-      res.status(403).send('無權删除留言');
+    // 確認用戶是否有權刪除該留言
+    if (message.userId.toString() !== req.user.userId && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'You do not have permission to delete this message' });
     }
+    
+
+    await Message.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Message deleted successfully' });
   } catch (error) {
-    console.error('删除留言失敗:', error);
-    res.status(500).send('删除留言失敗');
+    res.status(500).json({ message: 'Server error' });
   }
 });
+
+
 
 // 編輯留言
 app.put('/messages/:id', authMiddleware, async (req, res) => {
@@ -187,6 +190,7 @@ app.put('/messages/:id', authMiddleware, async (req, res) => {
     res.status(500).send('編輯留言失敗');
   }
 });
+
 
 // 獲取所有留言
 app.get('/messages', async (req, res) => {
@@ -223,18 +227,41 @@ app.post('/messages/:id/like', authMiddleware, async (req, res) => {
   }
 });
 
-// 獲取用戶
-app.get('/user-role/:userId', authMiddleware, async (req, res) => {
+// 取消點讚留言
+app.post('/messages/:id/unlike', authMiddleware, async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId);
-    if (!user) {
-      return res.status(404).send('用戶未找到');
+    const message = await Message.findById(req.params.id);
+    if (!message) {
+      return res.status(404).send('留言不存在');
     }
-    res.send({ role: user.role, userId: user._id, avatar: user.avatar, gender: user.gender });
+
+    if (message.likes > 0) {
+      message.likes -= 1;
+    }
+
+    await message.save();
+    res.status(200).send(message);
   } catch (error) {
-    res.status(500).send('獲取用戶失敗');
+    console.error('取消點讚失敗:', error);
+    res.status(500).send('取消點讚失敗');
   }
 });
+
+// 獲取用戶
+app.get('/user', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(404).json({ message: '用戶未找到' });
+    }
+
+    res.json({ userId: user._id, role: user.role });
+  } catch (error) {
+    res.status(500).json({ message: '獲取用戶失敗' });
+  }
+});
+
+
 
 // 創建回覆
 app.post('/messages/:id/replies', authMiddleware, async (req, res, next) => {
@@ -300,6 +327,7 @@ app.delete('/messages/:messageId/replies/:replyId', authMiddleware, async (req, 
     res.status(500).send('刪除回覆失敗');
   }
 });
+
 
 // 定義提交申訴的路由
 app.post('/appeals', authMiddleware, async (req, res) => {
