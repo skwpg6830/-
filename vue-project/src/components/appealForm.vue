@@ -19,7 +19,7 @@
     <el-form-item label="申訴內容" prop="content">
       <el-input type="textarea" v-model="appealForm.content"></el-input>
     </el-form-item>
-    <el-form-item>
+    <el-form-item style="margin-left: 42%">
       <el-button type="primary" @click="submitAppeal">提交</el-button>
       <el-button @click="resetForm">重置</el-button>
     </el-form-item>

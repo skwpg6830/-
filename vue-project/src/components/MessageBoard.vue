@@ -318,7 +318,7 @@ const canEdit = (message) => {
 }
 
 const canDeleteReply = (reply) => {
-  return reply.userId._id === userId.value
+  return userRole.value === 'admin' || reply.userId._id === userId.value
 }
 
 const isEditing = reactive({})

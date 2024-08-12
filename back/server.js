@@ -34,7 +34,6 @@ const userSchema = new mongoose.Schema({
   role: { type: String, default: 'user' },
   gender: { type: String, required: true },
   age: { type: String, required: true },
-  avatar: { type: String, required: true }
 });
 
 const User = mongoose.model('User', userSchema);
@@ -141,19 +140,19 @@ app.delete('/messages/:id', authMiddleware, async (req, res) => {
   try {
     const message = await Message.findById(req.params.id);
     if (!message) {
-      return res.status(404).json({ message: 'Message not found' });
+      return res.status(404).json({ message: '沒有找到留言' });
     }
 
     // 確認用戶是否有權刪除該留言
     if (message.userId.toString() !== req.user.userId && req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'You do not have permission to delete this message' });
+      return res.status(403).json({ message: '沒有權限刪除留言' });
     }
     
 
     await Message.findByIdAndDelete(req.params.id);
     res.json({ message: 'Message deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: '伺服器錯誤' });
   }
 });
 
