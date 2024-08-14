@@ -167,7 +167,7 @@ export default {
         return
       }
       try {
-        await axios.post('http://localhost:3000/register', {
+        await axios.post(`https://5z3fv5d7-3000.asse.devtunnels.ms/api/register`, {
           username: this.registerForm.username,
           password: this.registerForm.password,
           gender: this.registerForm.gender,
@@ -198,7 +198,10 @@ export default {
     },
     async login() {
       try {
-        const response = await axios.post('http://localhost:3000/login', this.loginForm)
+        const response = await axios.post(`https://5z3fv5d7-3000.asse.devtunnels.ms/api/login`, {
+          username: this.loginForm.username,
+          password: this.loginForm.password
+        })
         const token = response.data.token
         localStorage.setItem('token', token)
         const decodedToken = JSON.parse(atob(token.split('.')[1]))
@@ -238,7 +241,10 @@ export default {
           headers: { Authorization: `Bearer ${token}` }
         }
 
-        const response = await axios.get('http://localhost:3000/appeals', config)
+        const response = await axios.get(
+          'https://5z3fv5d7-3000.asse.devtunnels.ms/api/appeals',
+          config
+        )
         this.appeals = response.data
         this.showManageDialog = true
       } catch (error) {
@@ -257,7 +263,7 @@ export default {
           headers: { Authorization: `Bearer ${token}` }
         }
 
-        await axios.delete(`http://localhost:3000/appeals/${id}`, config)
+        await axios.delete(`/api/appeals/${id}`, config)
         this.appeals = this.appeals.filter((appeal) => appeal._id !== id)
         ElMessage.success('申訴已刪除')
       } catch (error) {

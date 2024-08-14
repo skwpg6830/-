@@ -31,7 +31,7 @@
     <el-card :style="{ color: message.textColor || '#000' }">
       <div class="message-header">
         <img :src="getAvatarUrl(message.userId)" alt="Avatar" class="avatar" />
-        <h4>{{ message.userId.username }}</h4>
+        <h4 v-if="message.userId">{{ message.userId.username }}</h4>
       </div>
       <h5 v-if="!isEditing[message._id]">{{ message.name }}</h5>
       <el-input v-else v-model="message.editName" placeholder="請編輯討論的主題" />
@@ -138,6 +138,11 @@ const form = reactive({
   message: '',
   textColor: '#000' // 設置默認顏色為黑色
 })
+
+// 載入環境變數
+
+console.log(`DB URL: /api`)
+
 const messages = reactive([])
 const userRole = ref('')
 const userId = ref('') // 保存當前用戶的 ID
@@ -148,7 +153,7 @@ const replyMessage = reactive({})
 const likeMessage = async (id) => {
   try {
     await axios.post(
-      `http://localhost:3000/messages/${id}/like`,
+      `https://5z3fv5d7-3000.asse.devtunnels.ms/api/messages/${id}/like`,
       {},
       {
         headers: {
@@ -167,9 +172,8 @@ const likeMessage = async (id) => {
 
 const unlikeMessage = async (id) => {
   try {
-    // console.log(`取消點讚的 URL: http://localhost:3000/messages/${id}/unlike`)
     await axios.post(
-      `http://localhost:3000/messages/${id}/unlike`,
+      `https://5z3fv5d7-3000.asse.devtunnels.ms/api/messages/${id}/unlike`,
       {},
       {
         headers: {
@@ -188,31 +192,40 @@ const unlikeMessage = async (id) => {
 
 const fetchMessages = async () => {
   try {
-    const response = await axios.get('http://localhost:3000/messages', {
+    console.log(`Fetching messages from: /api/messages`)
+    const response = await axios.get(`https://5z3fv5d7-3000.asse.devtunnels.ms/api/messages`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     })
-    console.log(response.data) // 打印出返回的數據，檢查是否包含回覆
-    messages.splice(
-      0,
-      messages.length,
-      ...response.data.map((message) => ({
-        ...message,
-        editName: message.name,
-        editMessage: message.message,
-        editTextColor: message.textColor
-      }))
-    )
-    console.log('獲取留言成功')
+    console.log(response) // 打印出完整的回應數據
+
+    if (Array.isArray(response.data)) {
+      messages.splice(
+        0,
+        messages.length,
+        ...response.data.map((message) => ({
+          ...message,
+          editName: message.name,
+          editMessage: message.message,
+          editTextColor: message.textColor,
+          userId: message.userId || {}, // 確保 userId 存在
+          _id: message._id || '' // 確保 _id 存在
+        }))
+      )
+    } else {
+      console.error('獲取的數據不是陣列:', response.data)
+      ElMessage.error('獲取留言失敗，數據格式錯誤')
+    }
   } catch (error) {
     console.error('獲取留言失敗:', error)
+    ElMessage.error('獲取留言失敗')
   }
 }
 
 const fetchUserRole = async () => {
   try {
-    const response = await axios.get('http://localhost:3000/user', {
+    const response = await axios.get(`https://5z3fv5d7-3000.asse.devtunnels.ms/api/user`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
@@ -227,10 +240,16 @@ const fetchUserRole = async () => {
 }
 
 const handleSubmit = async () => {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    console.error('No token found, redirecting to login.')
+    alert('身份驗證失敗，請重新登錄')
+    return
+  }
   if (form.name && form.message) {
     try {
       const response = await axios.post(
-        'http://localhost:3000/messages',
+        `https://5z3fv5d7-3000.asse.devtunnels.ms/api/messages`,
         { ...form },
         {
           headers: {
@@ -249,7 +268,7 @@ const handleSubmit = async () => {
       form.textColor = '#000' // 清空顏色選擇器並重置為默認顏色
       fetchMessages()
     } catch (error) {
-      if (error.response && error.response.status === 401) {
+      if (error.response && error.response.status === 403) {
         console.error('身份驗證失敗，請重新登錄')
         localStorage.removeItem('token')
         alert('身份驗證失敗，請重新登錄')
@@ -272,11 +291,15 @@ const handleSubmit = async () => {
 
 const deleteMessage = async (id) => {
   try {
-    await axios.delete(`http://localhost:3000/messages/${id}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
+    const response = await axios.delete(
+      `https://5z3fv5d7-3000.asse.devtunnels.ms/api/messages/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
       }
-    })
+    )
+    console.log('刪除回應:', response) // 記錄回應數據
     ElMessage.success('刪除成功')
     console.log('留言已刪除')
     fetchMessages()
@@ -289,11 +312,14 @@ const deleteMessage = async (id) => {
 const deleteReply = async (messageId, replyId) => {
   try {
     console.log(`Deleting reply with messageId: ${messageId}, replyId: ${replyId}`)
-    await axios.delete(`http://localhost:3000/messages/${messageId}/replies/${replyId}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
+    await axios.delete(
+      `https://5z3fv5d7-3000.asse.devtunnels.ms/api/messages/${messageId}/replies/${replyId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
       }
-    })
+    )
     ElMessage.success('刪除成功')
     console.log('回覆已刪除')
     fetchMessages()
@@ -304,17 +330,14 @@ const deleteReply = async (messageId, replyId) => {
 }
 
 const canDelete = (message) => {
-  // console.log(`Current userId: ${userId.value}, message ownerId: ${message.userId._id}`)
-  const result = userRole.value === 'admin' || message.userId._id === userId.value
-  // console.log(`Checking canDelete: ${result} for message ${message._id}`)
-  return result
+  console.log('message:', message)
+  console.log('userId:', message.userId)
+  return userRole.value === 'admin' || message.userId._id === userId.value
 }
 
 const canEdit = (message) => {
-  // console.log(`Current userId: ${userId.value}, message ownerId: ${message.userId._id}`)
-  const result = message.userId._id === userId.value
-  // console.log(`Checking canEdit: ${result} for message ${message._id}`)
-  return result
+  const user = message.userId || {} // 如果 userId 為 undefined，設置為空對象
+  return user._id === userId.value
 }
 
 const canDeleteReply = (reply) => {
@@ -336,7 +359,7 @@ const startEditing = (id, name, messageContent, textColor) => {
 const saveEdit = async (id, newName, newMessage, newTextColor) => {
   try {
     await axios.put(
-      `http://localhost:3000/messages/${id}`,
+      `https://5z3fv5d7-3000.asse.devtunnels.ms/api/messages/${id}`,
       { name: newName, message: newMessage, textColor: newTextColor },
       {
         headers: {
@@ -358,7 +381,7 @@ const submitReply = async (messageId) => {
     try {
       console.log('提交回覆:', { reply }) // 打印出請求數據
       await axios.post(
-        `http://localhost:3000/messages/${messageId}/replies`,
+        `https://5z3fv5d7-3000.asse.devtunnels.ms/api/messages/${messageId}/replies`,
         { reply }, // 發送的請求
         {
           headers: {

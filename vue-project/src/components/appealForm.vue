@@ -64,7 +64,7 @@ export default {
           }
 
           const response = await axios.post(
-            'http://localhost:3000/appeals',
+            'https://5z3fv5d7-3000.asse.devtunnels.ms/api/appeals',
             {
               appealType: this.appealForm.appealType,
               report: this.appealForm.report,

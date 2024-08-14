@@ -32,7 +32,7 @@ export default {
 
       this.isLoading = true
       try {
-        const response = await axios.post('http://localhost:3000/register', {
+        const response = await axios.post(`https://5z3fv5d7-3000.asse.devtunnels.ms/api/register`, {
           username: this.registerForm.username,
           password: this.registerForm.password,
           gender: this.registerForm.gender,
@@ -56,7 +56,10 @@ export default {
     async login() {
       this.isLoading = true
       try {
-        const response = await axios.post('http://localhost:3000/login', this.loginForm)
+        const response = await axios.post(
+          `https://5z3fv5d7-3000.asse.devtunnels.ms/api/login`,
+          this.loginForm
+        )
         const token = response.data.token
         localStorage.setItem('token', token)
         const decodedToken = JSON.parse(atob(token.split('.')[1]))

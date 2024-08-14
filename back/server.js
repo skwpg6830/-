@@ -12,14 +12,22 @@ dotenv.config();
 
 const app = express();
 const port = 3000;
-const SECRET_KEY = process.env.SECRET_KEY || 'your_secret_key';
+const dbUrl = process.env.DB_URL;
 
 app.use(express.json());
-app.use(cors());
+
+const corsOptions = {
+  origin: 'http://localhost:5173', // 替換為你的前端應用的地址
+  optionsSuccessStatus: 200
+}
+
+app.use(cors(corsOptions));
 app.use('/path/to/default-avatar.png', express.static(path.join(__dirname, 'public/images')));
 
+const SECRET_KEY = process.env.SECRET_KEY; // 確保 SECRET_KEY 已定義
+
 // 連接到 MongoDB
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/newdatabase')
+mongoose.connect(dbUrl)
   .then(() => {
     console.log('成功連接到 MongoDB');
   })
@@ -71,7 +79,7 @@ const replySchema = new mongoose.Schema({
 const Reply = mongoose.model('Reply', replySchema);
 
 // 用戶註冊
-app.post('/register', async (req, res, next) => {
+app.post('/api/register', async (req, res, next) => {
   try {
     const { username, password, gender, age } = req.body;
     if (!username || !password || !gender || !age) {
@@ -96,7 +104,7 @@ app.post('/register', async (req, res, next) => {
 });
 
 // 登陸
-app.post('/login', async (req, res, next) => {
+app.post('/api/login', async (req, res, next) => {
   try {
     const { username, password } = req.body;
     if (!username || !password) {
@@ -123,7 +131,7 @@ app.post('/login', async (req, res, next) => {
 });
 
 // 創建留言
-app.post('/messages', authMiddleware, async (req, res, next) => {
+app.post('/api/messages', authMiddleware, async (req, res, next) => {
   const { name, message, textColor } = req.body;
   try {
     const newMessage = await Message.create({ name, message, textColor, userId: req.user.userId });
@@ -136,7 +144,7 @@ app.post('/messages', authMiddleware, async (req, res, next) => {
 });
 
 // 删除留言
-app.delete('/messages/:id', authMiddleware, async (req, res) => {
+app.delete('/api/messages/:id', authMiddleware, async (req, res) => {
   try {
     const message = await Message.findById(req.params.id);
     if (!message) {
@@ -159,7 +167,7 @@ app.delete('/messages/:id', authMiddleware, async (req, res) => {
 
 
 // 編輯留言
-app.put('/messages/:id', authMiddleware, async (req, res) => {
+app.put('/api/messages/:id', authMiddleware, async (req, res) => {
   try {
     const { name, message, textColor } = req.body;
     const messageToUpdate = await Message.findById(req.params.id);
@@ -192,7 +200,7 @@ app.put('/messages/:id', authMiddleware, async (req, res) => {
 
 
 // 獲取所有留言
-app.get('/messages', async (req, res) => {
+app.get('/api/messages', async (req, res) => {
   try {
     const messages = await Message.find().populate('userId', 'username avatar gender').populate({
       path: 'replies',
@@ -209,7 +217,7 @@ app.get('/messages', async (req, res) => {
 });
 
 // 點讚留言
-app.post('/messages/:id/like', authMiddleware, async (req, res) => {
+app.post('/api/messages/:id/like', authMiddleware, async (req, res) => {
   try {
     const message = await Message.findById(req.params.id);
     if (!message) {
@@ -227,7 +235,7 @@ app.post('/messages/:id/like', authMiddleware, async (req, res) => {
 });
 
 // 取消點讚留言
-app.post('/messages/:id/unlike', authMiddleware, async (req, res) => {
+app.post('/api/messages/:id/unlike', authMiddleware, async (req, res) => {
   try {
     const message = await Message.findById(req.params.id);
     if (!message) {
@@ -247,7 +255,7 @@ app.post('/messages/:id/unlike', authMiddleware, async (req, res) => {
 });
 
 // 獲取用戶
-app.get('/user', authMiddleware, async (req, res) => {
+app.get('/api/user', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
     if (!user) {
@@ -263,7 +271,7 @@ app.get('/user', authMiddleware, async (req, res) => {
 
 
 // 創建回覆
-app.post('/messages/:id/replies', authMiddleware, async (req, res, next) => {
+app.post('/api/messages/:id/replies', authMiddleware, async (req, res, next) => {
   try {
     const { reply } = req.body; // 檢查接收的字段
 
@@ -284,7 +292,7 @@ app.post('/messages/:id/replies', authMiddleware, async (req, res, next) => {
 });
 
 // 獲取特定留言的所有回覆
-app.get('/messages/:id/replies', async (req, res) => {
+app.get('/api/messages/:id/replies', async (req, res) => {
   try {
     const messageId = req.params.id;
     const replies = await Reply.find({ messageId }).populate('userId', 'username avatar gender');
@@ -296,7 +304,7 @@ app.get('/messages/:id/replies', async (req, res) => {
 });
 
 // 刪除回覆
-app.delete('/messages/:messageId/replies/:replyId', authMiddleware, async (req, res) => {
+app.delete('/api/messages/:messageId/replies/:replyId', authMiddleware, async (req, res) => {
   try {
     const { messageId, replyId } = req.params;
 
@@ -329,7 +337,7 @@ app.delete('/messages/:messageId/replies/:replyId', authMiddleware, async (req, 
 
 
 // 定義提交申訴的路由
-app.post('/appeals', authMiddleware, async (req, res) => {
+app.post('/api/appeals', authMiddleware, async (req, res) => {
   try {
     const { appealType, report, content } = req.body;
     if (!appealType || !report || !content) {
@@ -350,7 +358,7 @@ app.post('/appeals', authMiddleware, async (req, res) => {
 });
 
 // 獲取所有申訴
-app.get('/appeals', authMiddleware, async (req, res) => {
+app.get('/api/appeals', authMiddleware, async (req, res) => {
   try {
     const appeals = await Appeal.find().populate('userId', 'username').exec();
     res.status(200).send(appeals);
@@ -361,7 +369,7 @@ app.get('/appeals', authMiddleware, async (req, res) => {
 });
 
 // 刪除申訴
-app.delete('/appeals/:id', authMiddleware, async (req, res) => {
+app.delete('/api/appeals/:id', authMiddleware, async (req, res) => {
   try {
     const id = req.params.id;
     await Appeal.findByIdAndDelete(id);
