@@ -19,7 +19,7 @@
     <el-form-item label="申訴內容" prop="content">
       <el-input type="textarea" v-model="appealForm.content"></el-input>
     </el-form-item>
-    <el-form-item style="margin-left: 42%">
+    <el-form-item>
       <el-button type="primary" @click="submitAppeal">提交</el-button>
       <el-button @click="resetForm">重置</el-button>
     </el-form-item>
@@ -104,8 +104,8 @@ export default {
 
 <style scoped>
 .form-with-border {
-  border: 20px solid #bb9a88;
-  box-shadow: inset 0 0 0 10px #ff8a65;
+  border: 20px solid #bf360c;
+  box-shadow: inset 0 0 0 10px #e64a19;
   padding: 5% 5% 5% 0;
 }
 </style>

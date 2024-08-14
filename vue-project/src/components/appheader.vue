@@ -314,7 +314,7 @@ a {
 }
 
 .el-header {
-  background-color: #979d6e;
+  background-color: gray;
   height: 64px;
   display: flex;
   align-items: center;
@@ -351,7 +351,7 @@ a {
 }
 
 .red-text {
-  color: #ff372e !important; /* 設置字體顏色為紅色 */
+  color: #fff !important; /* 設置字體顏色為紅色 */
   font-weight: bold;
 }
 
