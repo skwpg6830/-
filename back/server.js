@@ -7,6 +7,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const authMiddleware = require('./middleware/auth');
+const multer = require('multer')
 
 dotenv.config();
 
@@ -14,17 +15,46 @@ const app = express();
 const port = 3000;
 const dbUrl = process.env.DB_URL;
 
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
 const corsOptions = {
   origin: 'http://localhost:5173', // 替換為你的前端應用的地址
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // 允许的HTTP方法
+    allowedHeaders: ['Content-Type', 'Authorization'], // 允许的请求头
 }
 
 app.use(cors(corsOptions));
 app.use('/path/to/default-avatar.png', express.static(path.join(__dirname, 'public/images')));
 
 const SECRET_KEY = process.env.SECRET_KEY; // 確保 SECRET_KEY 已定義
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/uploads/'); // 设置上传路径
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`); // 设置文件名
+  }
+});
+
+// 配置 multer，指定文件保存路徑、大小限制和文件類型過濾
+const upload = multer({
+  storage: storage, // 正确配置 storage
+  limits: { fileSize: 2 * 1024 * 1024 }, // 限制文件大小为 2MB
+  fileFilter: (req, file, cb) => {
+    const filetypes = /jpeg|jpg|png/;
+    const mimetype = filetypes.test(file.mimetype);
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    if (mimetype && extname) {
+      return cb(null, true);
+    }
+    cb(new Error('僅支持 JPEG 和 PNG 圖片格式'));
+  }
+});
+
+app.use('public/uploads', express.static('uploads'));
 
 // 連接到 MongoDB
 mongoose.connect(dbUrl)
@@ -52,6 +82,7 @@ const messageSchema = new mongoose.Schema({
   message: { type: String, required: true },
   userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
   textColor: { type: String, default: '#000' },
+  images: { type: [String] }, // 定义 images 为字符串数组
   likes: { type: Number, default: 0 },
   replies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Reply' }]
 });
@@ -130,11 +161,15 @@ app.post('/api/login', async (req, res, next) => {
   }
 });
 
-// 創建留言
-app.post('/api/messages', authMiddleware, async (req, res, next) => {
+// 創建留言並上傳圖片
+app.post('/api/messages', authMiddleware, upload.array('images', 10), async (req, res, next) => {
   const { name, message, textColor } = req.body;
+  const images = req.files ? req.files.map(file => file.path.replace(/\\/g, '/')) : [];
   try {
-    const newMessage = await Message.create({ name, message, textColor, userId: req.user.userId });
+    if (!req.user) {
+      return res.status(401).send({ error: '未授權' });
+    }
+    const newMessage = await Message.create({ name, message, textColor, userId: req.user.userId, images });
     res.status(201).send(newMessage);
   } catch (error) {
     next(error);
@@ -142,6 +177,7 @@ app.post('/api/messages', authMiddleware, async (req, res, next) => {
     res.status(500).send('創建留言失敗');
   }
 });
+
 
 // 删除留言
 app.delete('/api/messages/:id', authMiddleware, async (req, res) => {
@@ -376,6 +412,18 @@ app.delete('/api/appeals/:id', authMiddleware, async (req, res) => {
     res.status(200).send({ message: '申訴已刪除' });
   } catch (error) {
     res.status(500).send({ message: '無法刪除申訴', error });
+  }
+});
+
+// 文件上傳路由，使用 array 方法確保所有上傳都以數組形式進行
+app.post('/api/public/upload', upload.array('images', 10), (req, res) => {
+  try {
+    const files = req.files; // req.files 將是一個包含所有上傳文件的數組
+    console.log('文件已接收:', files);
+    res.status(200).send({ message: '文件上傳成功', files });
+  } catch (error) {
+    console.error('文件上傳失敗:', error);
+    res.status(500).send({ message: '文件上傳失敗' });
   }
 });
 
