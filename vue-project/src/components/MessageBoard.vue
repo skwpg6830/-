@@ -19,7 +19,7 @@
     <el-upload
       class="upload-demo"
       drag
-      action="https://5z3fv5d7-3000.asse.devtunnels.ms/api/public/upload"
+      action="http://localhost:4000/api/public/upload"
       :headers="uploadHeaders"
       :before-upload="handleBeforeUpload"
       :on-success="handleUploadSuccess"
@@ -165,7 +165,7 @@ const getImageUrl = (imagePath) => {
   // 將反斜杠轉換為正斜杠
   const normalizedPath = imagePath.replace(/\\/g, '/')
   const encodedPath = encodeURIComponent(normalizedPath)
-  return `https://5z3fv5d7-3000.asse.devtunnels.ms/api/${encodedPath}` // 確保這裡的 URL 正確
+  return `http://localhost:4000/api/${encodedPath}` // 確保這裡的 URL 正確
 }
 
 const form = reactive({
@@ -189,7 +189,7 @@ const replyMessage = reactive({})
 const likeMessage = async (id) => {
   try {
     await axios.post(
-      `https://5z3fv5d7-3000.asse.devtunnels.ms/api/messages/${id}/like`,
+      `http://localhost:4000/api/messages/${id}/like`,
       {},
       {
         headers: {
@@ -209,7 +209,7 @@ const likeMessage = async (id) => {
 const unlikeMessage = async (id) => {
   try {
     await axios.post(
-      `https://5z3fv5d7-3000.asse.devtunnels.ms/api/messages/${id}/unlike`,
+      `http://localhost:4000/api/messages/${id}/unlike`,
       {},
       {
         headers: {
@@ -228,7 +228,7 @@ const unlikeMessage = async (id) => {
 
 const fetchMessages = async () => {
   try {
-    const response = await axios.get(`https://5z3fv5d7-3000.asse.devtunnels.ms/api/messages`, {
+    const response = await axios.get(`http://localhost:4000/api/messages`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
@@ -261,7 +261,7 @@ const fetchMessages = async () => {
 
 const fetchUserRole = async () => {
   try {
-    const response = await axios.get(`https://5z3fv5d7-3000.asse.devtunnels.ms/api/user`, {
+    const response = await axios.get(`http://localhost:4000/api/user`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
@@ -307,16 +307,12 @@ const handleSubmit = async () => {
         images: form.images // 確保圖片路徑被包含在請求數據中
       }
 
-      const response = await axios.post(
-        'https://5z3fv5d7-3000.asse.devtunnels.ms/api/messages',
-        messageData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}` // 確保這裡有正確的 token
-          }
+      const response = await axios.post('http://localhost:4000/api/messages', messageData, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` // 確保這裡有正確的 token
         }
-      )
+      })
 
       console.log('成功發言:', response.data)
       ElMessage.success('成功發言')
@@ -352,14 +348,11 @@ const handleSubmit = async () => {
 
 const deleteMessage = async (id) => {
   try {
-    const response = await axios.delete(
-      `https://5z3fv5d7-3000.asse.devtunnels.ms/api/messages/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
+    const response = await axios.delete(`http://localhost:4000/api/messages/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
       }
-    )
+    })
     console.log('刪除回應:', response) // 記錄回應數據
     ElMessage.success('刪除成功')
     // console.log('留言已刪除')
@@ -373,14 +366,11 @@ const deleteMessage = async (id) => {
 const deleteReply = async (messageId, replyId) => {
   try {
     // console.log(`Deleting reply with messageId: ${messageId}, replyId: ${replyId}`)
-    await axios.delete(
-      `https://5z3fv5d7-3000.asse.devtunnels.ms/api/messages/${messageId}/replies/${replyId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
+    await axios.delete(`http://localhost:4000/api/messages/${messageId}/replies/${replyId}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
       }
-    )
+    })
     ElMessage.success('刪除成功')
     // console.log('回覆已刪除')
     fetchMessages()
@@ -408,7 +398,7 @@ const handleUploadSuccess = (response, file, fileList) => {
   if (response.files && Array.isArray(response.files)) {
     response.files.forEach((file) => {
       if (file.path) {
-        // 修正路径为使用正斜杠以确保路径正确
+        // 修正路徑为使用正斜槓以确保路徑正確
         const correctedPath = file.path.replace(/\\/g, '/')
         form.images.push(correctedPath)
       } else {
@@ -456,7 +446,7 @@ const startEditing = (id, name, messageContent, textColor) => {
 const saveEdit = async (id, newName, newMessage, newTextColor) => {
   try {
     await axios.put(
-      `https://5z3fv5d7-3000.asse.devtunnels.ms/api/messages/${id}`,
+      `http://localhost:4000/api/messages/${id}`,
       { name: newName, message: newMessage, textColor: newTextColor },
       {
         headers: {
@@ -478,7 +468,7 @@ const submitReply = async (messageId) => {
     try {
       // console.log('提交回覆:', { reply })
       await axios.post(
-        `https://5z3fv5d7-3000.asse.devtunnels.ms/api/messages/${messageId}/replies`,
+        `http://localhost:4000/api/messages/${messageId}/replies`,
         { reply }, // 發送的請求
         {
           headers: {

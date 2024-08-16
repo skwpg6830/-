@@ -64,7 +64,7 @@ export default {
           }
 
           const response = await axios.post(
-            'https://5z3fv5d7-3000.asse.devtunnels.ms/api/appeals',
+            'http://localhost:4000/api/appeals',
             {
               appealType: this.appealForm.appealType,
               report: this.appealForm.report,
@@ -104,8 +104,8 @@ export default {
 
 <style scoped>
 .form-with-border {
-  border: 20px solid #bf360c;
-  box-shadow: inset 0 0 0 10px #e64a19;
+  border: 20px solid black;
+  box-shadow: inset 0 0 0 10px gray;
   padding: 5% 5% 5% 0;
 }
 </style>

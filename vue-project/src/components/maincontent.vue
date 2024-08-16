@@ -351,7 +351,7 @@ export default {
   setup() {
     const store = useStore()
     const items = ref([])
-    const activeName = ref('1') // 默认展开第一项
+    const activeName = ref('1') // 默認展開第一項
     const isLoggedIn = ref(false)
 
     const fetchData = () => {
@@ -421,7 +421,7 @@ h4 {
 }
 
 #card {
-  background-color: #bb9a88;
+  background-color: #fff;
 }
 
 img {
@@ -445,7 +445,7 @@ img {
   border: 1px solid var(--el-border-color-dark);
   box-shadow: var(--el-box-shadow);
   color: #ff372e;
-  background: #bb9a88;
+  background: #fff;
 }
 
 .el-carousel__item:nth-child(1) {

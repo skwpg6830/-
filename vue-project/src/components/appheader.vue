@@ -167,7 +167,7 @@ export default {
         return
       }
       try {
-        await axios.post(`https://5z3fv5d7-3000.asse.devtunnels.ms/api/register`, {
+        await axios.post(`http://localhost:4000/api/register`, {
           username: this.registerForm.username,
           password: this.registerForm.password,
           gender: this.registerForm.gender,
@@ -198,7 +198,7 @@ export default {
     },
     async login() {
       try {
-        const response = await axios.post(`https://5z3fv5d7-3000.asse.devtunnels.ms/api/login`, {
+        const response = await axios.post(`http://localhost:4000/api/login`, {
           username: this.loginForm.username,
           password: this.loginForm.password
         })
@@ -241,10 +241,7 @@ export default {
           headers: { Authorization: `Bearer ${token}` }
         }
 
-        const response = await axios.get(
-          'https://5z3fv5d7-3000.asse.devtunnels.ms/api/appeals',
-          config
-        )
+        const response = await axios.get('http://localhost:4000/api/appeals', config)
         this.appeals = response.data
         this.showManageDialog = true
       } catch (error) {
@@ -263,7 +260,7 @@ export default {
           headers: { Authorization: `Bearer ${token}` }
         }
 
-        await axios.delete(`/api/appeals/${id}`, config)
+        await axios.delete(`http://localhost:4000/api/appeals/${id}`, config)
         this.appeals = this.appeals.filter((appeal) => appeal._id !== id)
         ElMessage.success('申訴已刪除')
       } catch (error) {
@@ -314,7 +311,7 @@ a {
 }
 
 .el-header {
-  background-color: gray;
+  background-color: white;
   height: 64px;
   display: flex;
   align-items: center;
@@ -351,7 +348,7 @@ a {
 }
 
 .red-text {
-  color: #fff !important; /* 設置字體顏色為紅色 */
+  color: black !important; /* 設置字體顏色為紅色 */
   font-weight: bold;
 }
 

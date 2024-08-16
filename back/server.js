@@ -12,7 +12,7 @@ const multer = require('multer')
 dotenv.config();
 
 const app = express();
-const port = 3000;
+const port = 4000;
 const dbUrl = process.env.DB_URL;
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -21,8 +21,8 @@ app.use(express.json());
 const corsOptions = {
   origin: 'http://localhost:5173', // 替換為你的前端應用的地址
   optionsSuccessStatus: 200,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // 允许的HTTP方法
-    allowedHeaders: ['Content-Type', 'Authorization'], // 允许的请求头
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // 允許的HTTP方法
+    allowedHeaders: ['Content-Type', 'Authorization'], // 允許請求
 }
 
 app.use(cors(corsOptions));
@@ -32,17 +32,17 @@ const SECRET_KEY = process.env.SECRET_KEY; // 確保 SECRET_KEY 已定義
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public/uploads/'); // 设置上传路径
+    cb(null, 'public/uploads/'); // 設置上傳路徑
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`); // 设置文件名
+    cb(null, `${Date.now()}-${file.originalname}`); // 設置文件名
   }
 });
 
 // 配置 multer，指定文件保存路徑、大小限制和文件類型過濾
 const upload = multer({
   storage: storage, // 正确配置 storage
-  limits: { fileSize: 2 * 1024 * 1024 }, // 限制文件大小为 2MB
+  limits: { fileSize: 2 * 1024 * 1024 }, // 限制文件大小為 2MB
   fileFilter: (req, file, cb) => {
     const filetypes = /jpeg|jpg|png/;
     const mimetype = filetypes.test(file.mimetype);
@@ -434,6 +434,6 @@ app.use((err, req, res, next) => {
 });
 
 // 啟動服務器
-app.listen(port, () => {
+app.listen(port|| process.env.PORT, () => {
   console.log(`伺服器成功啟動 ${port}`);
 });
