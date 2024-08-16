@@ -58,7 +58,7 @@ html,
 #app {
   height: 100%;
   margin: 0;
-  background-color: #cac6bd;
+  background-color: #fff;
   font-family: 'LXGW WenKai Mono TC', monospace;
   cursor: none;
 }

@@ -172,7 +172,7 @@ const getImageUrl = (imagePath) => {
   const url = imagePath.startsWith('http')
     ? imagePath
     : `http://localhost:4000/${imagePath.replace(/^public\//, '')}` // 去掉 'public/' 前綴
-  console.log('生成的圖片 URL:', url)
+  // console.log('生成的圖片 URL:', url)
   return url
 }
 
@@ -324,6 +324,9 @@ const handleSubmit = async () => {
 
       console.log('成功發言:', response.data)
       ElMessage.success('成功發言')
+      setTimeout(function () {
+        window.location.reload()
+      }, 300) // 延遲0.3秒刷新頁面
 
       // 確保將後端返回的圖片數據更新到messages中
       const createdMessage = {
@@ -390,6 +393,12 @@ const deleteReply = async (messageId, replyId) => {
 
 // 上傳相關的處理
 const handleBeforeUpload = (file) => {
+  const token = localStorage.getItem('token') // 假設 token 存儲在 localStorage 中
+  if (!token) {
+    ElMessage.error('請先登入再上傳文件')
+    return false
+  }
+
   const isLt2M = file.size / 1024 / 1024 < 2
   if (!isLt2M) {
     ElMessage.error('上傳圖片大小不能超過 2MB!')
@@ -407,7 +416,7 @@ const handleUploadSuccess = (response, file, fileList) => {
       if (file.path) {
         // 修正路徑为使用正斜槓以确保路徑正確
         const correctedPath = file.path.replace(/\\/g, '/')
-        console.log('修正後的圖片路徑:', correctedPath)
+        // console.log('修正後的圖片路徑:', correctedPath)
         form.images.push(correctedPath)
       } else {
         console.error('圖片路徑不存在於響應數據中:', response)

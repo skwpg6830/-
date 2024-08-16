@@ -398,7 +398,7 @@ export default {
 <style scoped>
 h2 {
   text-align: center;
-  color: #fff;
+  color: black;
   font-size: 40px;
 }
 
