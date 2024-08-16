@@ -18,7 +18,7 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        target: 'https://5z3fv5d7-3000.asse.devtunnels.ms/', // 替換為你的遠端伺服器地址和端口
+        target: 'http://localhost:4000/api', // 替換為你的遠端伺服器地址和端口
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }

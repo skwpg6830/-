@@ -157,15 +157,23 @@ import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
 
-// Import images using ES6 import statements
 import femaleAvatar from '@/assets/female-avatar.png'
 import maleAvatar from '@/assets/male-avatar.png' // 根據需要替換為正確的路徑
 
+const message = ref({
+  images: [
+    // 示例圖片路徑
+    'public/uploads/1723777967625-antler-899123_640.jpg'
+  ]
+})
+
 const getImageUrl = (imagePath) => {
-  // 將反斜杠轉換為正斜杠
-  const normalizedPath = imagePath.replace(/\\/g, '/')
-  const encodedPath = encodeURIComponent(normalizedPath)
-  return `http://localhost:4000/api/${encodedPath}` // 確保這裡的 URL 正確
+  // 確保路徑是正確的
+  const url = imagePath.startsWith('http')
+    ? imagePath
+    : `http://localhost:4000/${imagePath.replace(/^public\//, '')}` // 去掉 'public/' 前綴
+  console.log('生成的圖片 URL:', url)
+  return url
 }
 
 const form = reactive({
@@ -390,7 +398,6 @@ const handleBeforeUpload = (file) => {
 }
 
 const handleUploadSuccess = (response, file, fileList) => {
-  console.log('文件上傳成功', response)
   console.log('文件列表:', fileList)
   ElMessage.success('文件上傳成功')
 
@@ -400,6 +407,7 @@ const handleUploadSuccess = (response, file, fileList) => {
       if (file.path) {
         // 修正路徑为使用正斜槓以确保路徑正確
         const correctedPath = file.path.replace(/\\/g, '/')
+        console.log('修正後的圖片路徑:', correctedPath)
         form.images.push(correctedPath)
       } else {
         console.error('圖片路徑不存在於響應數據中:', response)
@@ -544,14 +552,14 @@ onMounted(() => {
 }
 
 .message-images {
-  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .message-image {
-  max-width: 100%; /* 使圖片寬度不超過留言框 */
+  max-width: 100%;
   height: auto;
-  margin-bottom: 10px;
-  border-radius: 5px;
+  margin: 5px;
 }
 
 .avatar {

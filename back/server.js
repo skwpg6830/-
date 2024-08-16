@@ -54,7 +54,10 @@ const upload = multer({
   }
 });
 
-app.use('public/uploads', express.static('uploads'));
+app.use('/uploads', express.static('public/uploads'));
+
+// 配置靜態資源目錄
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // 連接到 MongoDB
 mongoose.connect(dbUrl)
@@ -163,8 +166,7 @@ app.post('/api/login', async (req, res, next) => {
 
 // 創建留言並上傳圖片
 app.post('/api/messages', authMiddleware, upload.array('images', 10), async (req, res, next) => {
-  const { name, message, textColor } = req.body;
-  const images = req.files ? req.files.map(file => file.path.replace(/\\/g, '/')) : [];
+  const { name, message, textColor, images } = req.body;
   try {
     if (!req.user) {
       return res.status(401).send({ error: '未授權' });
