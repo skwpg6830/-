@@ -50,7 +50,7 @@
         <h3>經濟損失</h3>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <div data-aos="fade-left" data-aos-offset="300" data-aos-easing="ease-in-sine">
+        <div data-aos="fade-right" data-aos-offset="500" data-aos-easing="ease-in-sine">
           <el-card id="card">
             <template #header>
               <div class="card-header" style="text-align: center">
@@ -70,7 +70,7 @@
         </div>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <div data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="2000">
+        <div data-aos="fade-left" data-aos-offset="500" data-aos-easing="ease-in-sine">
           <el-card id="card">
             <template #header>
               <div class="card-header" style="text-align: center">
@@ -94,7 +94,7 @@
         <h3>病媒傳播</h3>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <div data-aos="fade-right" data-aos-offset="300">
+        <div data-aos="fade-right" data-aos-offset="500" data-aos-easing="ease-in-sine">
           <el-card id="card">
             <template #header>
               <div class="card-header" style="text-align: center">
@@ -114,7 +114,7 @@
         </div>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <div data-aos="fade-left">
+        <div data-aos="fade-left" data-aos-offset="500" data-aos-easing="ease-in-sine">
           <el-card id="card">
             <template #header>
               <div class="card-header" style="text-align: center">
@@ -137,7 +137,7 @@
         <h3>競爭資源</h3>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <div data-aos="zoom-in-right" data-aos-offset="300">
+        <div data-aos="fade-right" data-aos-offset="500" data-aos-easing="ease-in-sine">
           <el-card id="card">
             <template #header>
               <div class="card-header" style="text-align: center">
@@ -157,7 +157,7 @@
         </div>
       </el-col>
       <el-col :span="12" :sm="12" :xs="24">
-        <div data-aos="zoom-in-right">
+        <div data-aos="fade-left" data-aos-offset="500" data-aos-easing="ease-in-sine">
           <el-card id="card">
             <template #header>
               <div class="card-header" style="text-align: center">

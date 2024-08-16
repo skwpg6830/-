@@ -20,7 +20,6 @@
       class="upload-demo"
       drag
       action="http://localhost:4000/api/public/upload"
-      :headers="uploadHeaders"
       :before-upload="handleBeforeUpload"
       :on-success="handleUploadSuccess"
       :on-error="handleUploadError"
@@ -543,11 +542,11 @@ onMounted(() => {
 }
 
 .message-card.even {
-  background-color: #b5a8a0;
+  box-shadow: inset 0 0 10px rgba(210, 0, 210, 0.5);
 }
 
 .message-card.odd {
-  background-color: #cac6bd;
+  box-shadow: inset 0 0 10px rgba(0, 150, 150, 0.5);
 }
 
 .el-card {
