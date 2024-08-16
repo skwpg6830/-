@@ -311,7 +311,8 @@ a {
 }
 
 .el-header {
-  background-color: white;
+  background-color: #fff;
+  box-shadow: inset 98px 0 0 0 #f3efdd; /* 添加陰影效果 */
   height: 64px;
   display: flex;
   align-items: center;

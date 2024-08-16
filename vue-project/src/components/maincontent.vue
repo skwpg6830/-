@@ -1,9 +1,9 @@
 <template>
   <el-main>
-    <el-row :gutter="20">
-      <el-col>
+    <el-row>
+      <el-col :span="24">
         <div>
-          <el-carousel trigger="click" height="878px">
+          <el-carousel trigger="click" height="100vh">
             <el-carousel-item v-for="item in items" :key="item.id">
               <img :src="item.image" alt="Carousel Image" />
             </el-carousel-item>
@@ -448,6 +448,10 @@ img {
   background: #fff;
 }
 
+.el-carousel {
+  margin: 0 -5% 0;
+}
+
 .el-carousel__item:nth-child(1) {
   background: url('../assets/福壽螺.png') no-repeat center;
   background-size: 100% 50%;
@@ -504,6 +508,10 @@ img {
   .el-card img {
     padding: 1% 0 1%;
     margin: 1%;
+  }
+
+  .footer {
+    margin: 0 -1.1% -1.1%;
   }
 }
 </style>
