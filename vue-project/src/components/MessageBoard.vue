@@ -541,14 +541,6 @@ onMounted(() => {
   border-radius: 5px;
 }
 
-.message-card.even {
-  box-shadow: inset 0 0 10px rgba(210, 0, 210, 0.5);
-}
-
-.message-card.odd {
-  box-shadow: inset 0 0 10px rgba(0, 150, 150, 0.5);
-}
-
 .el-card {
   transition: background-color 0.3s;
 }

@@ -46,10 +46,7 @@
           </div>
         </div>
       </el-col>
-      <el-col :span="24" :xs="24">
-        <h3>經濟損失</h3>
-      </el-col>
-      <el-col :span="12" :sm="12" :xs="24">
+      <el-col :span="24" :sm="24" :xs="24">
         <div data-aos="fade-right" data-aos-offset="500" data-aos-easing="ease-in-sine">
           <el-card id="card">
             <template #header>
@@ -58,121 +55,172 @@
               </div>
             </template>
             <p>
-              一項2004年的調查發現，1979年首度引進臺灣的福壽螺，短短25年間已造成51億元的農業經濟損失，若加上政府與農民每年投入的防治費用，損失金額更直逼100億元。
+              1.一項2004年的調查發現，1979年首度引進臺灣的福壽螺，短短25年間已造成51億元的農業經濟損失，若加上政府與農民每年投入的防治費用，損失金額更直逼100億元。
             </p>
             <p>
-              農民每年每公頃投入防治福壽螺的金額平均約2,100元，若不採取任何防治措施，每年每公頃平均損失將高達2.3萬元;當防治措施沒有做好時，福壽螺危害臺灣農業生態環境所造成的無形損失為新臺幣51億元。
+              2.農民每年每公頃投入防治福壽螺的金額平均約2,100元，若不採取任何防治措施，每年每公頃平均損失將高達2.3萬元;當防治措施沒有做好時，福壽螺危害臺灣農業生態環境所造成的無形損失為新臺幣51億元。
             </p>
-            <template #footer
-              ><img src="../assets/農業方面損失.jpg" /> <img src="../assets/農業方面損失2.jpeg"
-            /></template>
+            <p>
+              3.福壽螺的危害主要是在於牠們會吃掉農作物，尤其是稻田裡的稻米，這些稻米是農民的生計，如果被福壽螺吃掉，農民的收入就會受到影響。
+            </p>
+            <p>
+              4.以米糠搭配陷阱誘捕福壽螺，雖然有效率，且對環境與生物較為友善，但對於像福壽螺這般環境適應力強、繁殖力又高的外來種而言，是治標不治本，因為不可能完全移除。
+            </p>
+            <template #footer>
+              <div class="image-container">
+                <img src="../assets/農業方面損失.jpg" /><img
+                  src="../assets/農業方面損失3.png"
+                /><img src="../assets/農業方面損失4.png" /><img
+                  src="../assets/農業方面損失2.jpeg"
+                /></div
+            ></template>
           </el-card>
         </div>
       </el-col>
-      <el-col :span="12" :sm="12" :xs="24">
+      <el-col :span="24" :sm="24" :xs="24">
         <div data-aos="fade-left" data-aos-offset="500" data-aos-easing="ease-in-sine">
           <el-card id="card">
             <template #header>
               <div class="card-header" style="text-align: center">
-                <h4>公共設施方面損失</h4>
+                <h4>流浪貓狗帶來的問題</h4>
               </div>
             </template>
             <p>
-              入侵紅火蟻常被發現在電氣設備內築巢，像是電錶、變電箱、電纜線箱等，因為來自南美溫暖大草原的入侵紅火蟻喜歡溫暖的環境，電路設備的內部溫度偏高，恰巧是陰暗的密閉空間，正好成為入侵紅火蟻築巢的最佳選擇。
+              1.2022年3月14日，中央研究院建置的臺灣物種名錄，正式將犬貓更新為「外來入侵種」。而本次流浪犬貓的，亦有諮詢過相關學者，取得對野生動物的危害確認而更新。
             </p>
             <p>
-              而在電氣設備中的入侵紅火蟻經常會咬壞電線，造成電線設備的短路及損壞，除了維護上的成本外，就連清除成本也是一筆不小的開銷，每年造成的經濟損失非常之可觀。
+              2.嘉義縣布袋鎮的豬舍及鵝場日前遭浪犬入侵，造成豬跟鵝大量傷亡，農民損失慘重。農民表示，浪犬入侵後，豬舍及鵝場內的豬跟鵝都受到驚嚇，有的嚇得亂竄，有的則是被咬傷，造成大量傷亡。
             </p>
-            <template #footer
-              ><img src="../assets/公共設施方面損失.png" />
-              <img src="../assets/公共設施方面損失2.png"
-            /></template>
+            <p>
+              3.浪犬造成農損，主要是因為牠們會破壞農作物，尤其是農民種植的蔬菜，這些蔬菜是農民的生計，如果被浪犬破壞，農民的收入就會受到影響。
+            </p>
+            <p>
+              4.弓形蟲病、貓蛔蟲和貓抓病是常見的貓咪危害人體疾病，其中弓形蟲病是一種由弓形蟲引起的傳染病，主要是由貓咪傳播給人類，而貓蛔蟲則是由貓咪的排泄物傳播給人類，貓抓病則是由貓咪的爪子傷口傳播給人類。
+            </p>
+            <template #footer>
+              <div class="image-container">
+                <img src="../assets/流浪貓狗帶來的問題.png" />
+                <img src="../assets/流浪貓狗帶來的問題2.png" />
+                <img src="../assets/流浪貓狗帶來的問題3.png" />
+                <img src="../assets/流浪貓狗帶來的問題4.png" /></div
+            ></template>
           </el-card>
         </div>
       </el-col>
-      <el-col :span="24" :xs="24">
-        <h3>病媒傳播</h3>
-      </el-col>
-      <el-col :span="12" :sm="12" :xs="24">
+      <el-col :span="24" :sm="24" :xs="24">
         <div data-aos="fade-right" data-aos-offset="500" data-aos-easing="ease-in-sine">
           <el-card id="card">
             <template #header>
               <div class="card-header" style="text-align: center">
-                <h4>大鼠</h4>
+                <h4>虐殺外來種無法可管?</h4>
               </div>
             </template>
             <p>
-              鼠類因為生活習性的關係，長期活動於較骯髒且容易受汙染的場所，如：水溝、地下道、菜市場…等地方，因此身上帶原傳染病的機會高上許多！
+              1.一隻隻中箭後綠鬣蜥任其逐漸死亡；一隻懷孕的綠鬣蜥受到驚嚇後試圖闖入民宅，身上有多處射擊傷口；一群幼年的綠鬣蜥跟鞭炮一起被膠帶綑綁著，遭殘忍虐殺。
             </p>
             <p>
-              透過老鼠作為媒介的疾病包括：漢他病毒、拉薩病毒、沙狀病毒、鼠疫、鼠咬熱、沙門氏桿菌、鉤端螺旋體、地方性斑疹傷寒、弓蟲、焦蟲、包膜絛蟲、阿米巴原蟲…等。
+              2.2021年3月，台灣動物社會研究召開記者會，譴責農委會「嚴重失職，移除入侵動物毫無策略及人道規範，放任民眾虐殺動物」希望盡快制定相關規範，並調查懲處虐待行為。
+            </p>
+            <p>
+              3.移除是不得不的做法。尤其虐待或拿來炫耀更是不可取，我們不鼓勵這樣的行為。變相的移除只會增加該生物的痛苦，我們應該要有更好的方法來處理這些問題。
+            </p>
+            <p>
+              4.現況社會大眾對於外來入侵種根深蒂固的惡意，人們不認為移除需講求動物福利，而是以殺害為榮，這樣的觀念將會影響到下一代的價值觀。
             </p>
             <template #footer
-              ><img src="../assets/老鼠.png" /> <img src="../assets/老鼠2.png"
-            /></template>
+              ><div class="image-container">
+                <img src="../assets/虐殺外來種無法可管.png" />
+                <img src="../assets/虐殺外來種無法可管2.png" />
+                <img src="../assets/虐殺外來種無法可管3.png" />
+                <img src="../assets/虐殺外來種無法可管4.png" /></div
+            ></template>
           </el-card>
         </div>
       </el-col>
-      <el-col :span="12" :sm="12" :xs="24">
+      <el-col :span="24" :sm="24" :xs="24">
         <div data-aos="fade-left" data-aos-offset="500" data-aos-easing="ease-in-sine">
           <el-card id="card">
             <template #header>
               <div class="card-header" style="text-align: center">
-                <h4>鼬獾</h4>
+                <h4>走私問題</h4>
               </div>
             </template>
             <p>
-              鼬獾是鼬獾屬四種動物的一種正如大部分哺乳類，鼬獾也可能成為狂犬病宿主。遭感染並發病之鼬獾，會有異於其生態習性的行為產生，需特別注意。
+              1.澳洲小龍蝦就是最典型的養殖業者引進外來種逃逸到台灣本土環境的例子，這種小龍蝦在台灣的水域中繁殖，並且開始對當地的生態系統造成影響。
             </p>
             <p>
-              遇到鼬獾時請與之保持安全距離，勿接觸或餵食，避免被感染，罹患狂犬病的鼬獾會在2到3週內發病，症狀會較為狂躁，一旦發病就會邁向死亡。
+              2.在2002年，中國藍鵲疑因走私侵入台灣，作為外來種，因為族群擴大、棲地與食性相同，中國藍鵲已然成為台灣藍鵲的勁敵，對生態環境構成影響。
+            </p>
+            <p>
+              3.魚虎遭人為走私後放入台灣水域，又在台灣的水域沒有天敵故大量繁殖。而魚虎作為肉食性魚類，會對台灣原生魚類造成極大危害。
+            </p>
+            <p>
+              4.2011年5月苗栗縣政府農業處宣稱為增加生態資源，在縣境兩處號稱生態池的地方放流總共七百斤的美國牛蛙，原本應具備專業知識的農業處大開生態倒車的作法，造成不可逆的生態浩刧。
             </p>
             <template #footer
-              ><img src="../assets/鼬獾.jpg" /> <img src="../assets/鼬獾2.jpg"
-            /></template>
+              ><div class="image-container">
+                <img src="../assets/走私問題.png" /> <img src="../assets/走私問題2.jpg" />
+                <img src="../assets/走私問題3.png" /><img src="../assets/走私問題4.png" /></div
+            ></template>
           </el-card>
         </div>
       </el-col>
-      <el-col :span="24" :xs="24">
-        <h3>競爭資源</h3>
-      </el-col>
-      <el-col :span="12" :sm="12" :xs="24">
+      <el-col :span="24" :sm="24" :xs="24">
         <div data-aos="fade-right" data-aos-offset="500" data-aos-easing="ease-in-sine">
           <el-card id="card">
             <template #header>
               <div class="card-header" style="text-align: center">
-                <h4>白尾八哥</h4>
+                <h4>隨意餵食問題</h4>
               </div>
             </template>
             <p>
-              白尾八哥早年作為寵物鳥引入臺灣，除了籠中逸鳥，宗教放生更是助長其族群擴散。在野外最早的紀錄為1978年，從2013年開始族群急遽增加。
+              1.野生台灣獼猴一但被人類餵食習慣後，會認為人類就是帶著食物的傢伙，這樣的行為會讓獼猴失去尋找食物的能力，嚴重依賴人類的食物並與人類爭搶食物，進而演變成人猴大戰。
             </p>
             <p>
-              白尾八哥的到來使得本土的野生麻雀遭受嚴重損失，有人目睹白尾八哥捕食麻雀幼雛，因兩種鳥類棲地重疊，白尾八哥體型上又較大，侵略性及地域性也強，所以遇到較弱小的就會去啄食。
+              2.松鼠本以植物、果實為主食，但被餵食習慣後族群數量逐漸增加，超出了生態負荷。而松鼠平時有啃樹皮控制門牙長度的習慣，過多的松鼠將導致大量樹皮被啃食，導致樹木估死，進而影響生態平衡。
+            </p>
+            <p>
+              3.竹雞是一種台灣低海拔山區常見之鳥類，幼鳥若長期與人接觸容易產生印痕現象，將人類誤以為是親鳥，導致容易被人類捕食，此外人類的食物也即起不適合鳥類進食，因餵食造成的物種聚集更容易導致喘染病的傳播。
+            </p>
+            <p>
+              4.本來極少在人類面前現身的黃喉貂，近些年越來越常出現在人類面前，特別在玉山、太平山國家公園，民眾餵食的亂象頻頻發生，一但他們改變覓食習性，甚至主動向人乞食，也讓人擔憂是否會步入台灣獼猴後塵。
             </p>
             <template #footer
-              ><img src="../assets/白尾八哥.jpg" /> <img src="../assets/白尾八哥2.jpg"
-            /></template>
+              ><div class="image-container">
+                <img src="../assets/隨意餵食問題.png" />
+                <img src="../assets/隨意餵食問題2.png" />
+                <img src="../assets/隨意餵食問題3.png" />
+                <img src="../assets/隨意餵食問題4.png" /></div
+            ></template>
           </el-card>
         </div>
       </el-col>
-      <el-col :span="12" :sm="12" :xs="24">
+      <el-col :span="24" :sm="24" :xs="24">
         <div data-aos="fade-left" data-aos-offset="500" data-aos-easing="ease-in-sine">
           <el-card id="card">
             <template #header>
               <div class="card-header" style="text-align: center">
-                <h4>紅嘴藍鵲</h4>
+                <h4>棄養問題</h4>
               </div>
             </template>
             <p>
-              紅嘴藍鵲又稱中國藍鵲，分布於喜馬拉雅山脈、印度東北部、中國、緬甸及印度支那，這種鳥的飛行能力既不算強，本身亦無遷徙的習性，按理說是不該出現在台灣地區，近年來卻時而聽到關於牠們出沒的風聲。
+              1.台灣鴿子競賽賭金每年上看至少700億，使得萬隻鴿子年年在海上上演生死戰，時間內返回的賽鴿成為鴿主的心肝寶貝，繼續育種培養下一代比賽，未折返的鴿子則任其自生自滅，有些恐命喪大海，然後就算有幸回到岸上，也有可能因為輸了比賽鴿主直接折斷翅膀棄養，因而無法飛翔。
             </p>
             <p>
-              紅嘴藍鵲無論是習性、飲食或適合棲地等各方面的生存條件，皆與本土的台灣藍鵲相似，因此牠的出現也意味著領域競爭的威脅，長期下來有可能導致台灣藍鵲族群銳減、甚至絕滅。
+              2.宜蘭縣武荖坑日前有民眾發現大量疑遭到放生的斑龜，總數量可能超過2000隻。宜蘭縣政府2月21日接獲通報，目前緊急救援235隻斑龜，有些已經被發現明顯死亡，報案民眾在武荖坑現場遇到一位年約7、80歲的老翁，研判有可能是老翁放生，由於距離事發已隔多日，目前也尚未聯繫到老翁，無從確知斑龜總量。
+            </p>
+            <p>
+              3.媒體於2022年12月23日大量報導嘉義東石出現獼猴抱小狗，然而東石之前並沒有猴子出沒的紀錄，研判是棄養的獼猴，雖然有對該小狗實施救援，但現場受到大批不支持救援的民眾阻撓，至2022年12月25日，被民眾發現小狗被掛在樹上明顯死亡。
+            </p>
+            <p>
+              4.農委會於2022年3月1日起公告禁止一般人飼養比特犬，然而政府配套措施不足，導致許多原本飼養的大量飼主棄養比特犬，流落至街頭或收容所，加劇棄養的相關問題。
             </p>
             <template #footer
-              ><img src="../assets/紅嘴藍鵲.jpg" /> <img src="../assets/紅嘴藍鵲2.jpg"
-            /></template>
+              ><div class="image-container">
+                <img src="../assets/棄養問題.png" /> <img src="../assets/棄養問題2.png" /><img
+                  src="../assets/棄養問題3.png"
+                /><img src="../assets/棄養問題4.png" /></div
+            ></template>
           </el-card>
         </div>
       </el-col>
@@ -402,12 +450,6 @@ h2 {
   font-size: 40px;
 }
 
-h3 {
-  text-align: center;
-  color: #4db6ac;
-  font-size: 30px;
-}
-
 h4 {
   color: #607d8b;
   font-size: 25px;
@@ -488,14 +530,10 @@ img {
     padding: 2em;
   }
 
-  .el-col img:first-child {
-    float: left;
-    margin-right: 5em;
-  }
-
-  .el-col img:last-child {
-    float: right;
-    margin-left: 5em;
+  .image-container {
+    display: flex;
+    justify-content: space-between; /* 確保圖片之間的間距相等 */
+    align-items: center;
   }
 
   .el-carousel__item {
@@ -505,10 +543,10 @@ img {
     top: -50%;
   }
 
-  .el-card img {
+  /* .el-card img {
     padding: 1% 0 1%;
     margin: 1%;
-  }
+  } */
 
   .footer {
     margin: 0 -1.1% -1.1%;
