@@ -521,6 +521,13 @@ img {
   background-size: 100% 50%;
 }
 
+/* 手機版面 */
+@media (max-width: 768px) {
+  .image-container {
+    text-align: center;
+  }
+}
+
 /* PC版樣式 */
 @media (min-width: 769px) {
   .el-main {

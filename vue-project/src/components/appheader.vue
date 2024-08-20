@@ -377,6 +377,7 @@ a {
   .menu-toggle {
     display: block;
     font-size: 24px;
+    margin-left: 100%;
   }
 
   .logo {

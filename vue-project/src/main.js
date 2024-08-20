@@ -7,6 +7,15 @@ import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 const app = createApp(App)
+
+router.beforeEach((to, from, next) => {
+  if (to.path === '/' && from.path !== '/video') {
+    next('/video')
+  } else {
+    next()
+  }
+})
+
 app.use(router)
 app.use(store)
 app.use(ElementPlus)

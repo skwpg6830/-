@@ -1,23 +1,43 @@
 <template>
-  <el-container class="container">
-    <appheader class="header" @login="handleLogin" />
-    <el-main class="main-content">
-      <div class="flair flair--3"></div>
-      <maincontent />
-    </el-main>
-  </el-container>
+  <div id="app">
+    <router-view v-if="!videoPlayed" />
+    <div v-else>
+      <appheader class="header" @login="handleLogin" />
+      <el-container class="container">
+        <el-main class="main-content">
+          <div class="flair flair--3"></div>
+          <maincontent />
+        </el-main>
+      </el-container>
+    </div>
+  </div>
 </template>
 
 <script>
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import AppHeader from './components/appheader.vue'
 import MainContent from './components/maincontent.vue'
-import { gsap } from 'gsap'
+import gsap from 'gsap'
 
 export default {
   name: 'App',
   components: {
     appheader: AppHeader,
     maincontent: MainContent
+  },
+  setup() {
+    const router = useRouter()
+    const videoPlayed = ref(sessionStorage.getItem('videoPlayed') === 'true')
+
+    onMounted(() => {
+      if (!videoPlayed.value) {
+        sessionStorage.setItem('videoPlayed', 'true')
+        router.push('/video')
+      }
+    })
+
+    return { videoPlayed }
   },
   data() {
     return {
@@ -60,7 +80,6 @@ html,
   margin: 0;
   background-color: #fff;
   font-family: 'LXGW WenKai Mono TC', monospace;
-  cursor: none;
 }
 
 .container {
