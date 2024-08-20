@@ -104,8 +104,7 @@ export default {
 
 <style scoped>
 .form-with-border {
-  border: 20px solid black;
-  box-shadow: inset 0 0 0 10px #607d8b;
+  border: 10px solid black;
   padding: 5% 5% 5% 0;
 }
 </style>

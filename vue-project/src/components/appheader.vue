@@ -40,7 +40,7 @@
     <!-- 註冊彈窗 -->
     <el-dialog v-model="showRegisterDialog" title="註冊" style="text-align: center">
       <el-form :model="registerForm">
-        <el-form-item label="帳號">
+        <el-form-item label="用戶名">
           <el-input v-model="registerForm.username"></el-input>
         </el-form-item>
         <el-form-item label="密碼">
@@ -77,7 +77,7 @@
     <!-- 登入彈窗 -->
     <el-dialog v-model="showLoginDialog" title="登入" style="text-align: center">
       <el-form :model="loginForm">
-        <el-form-item label="帳號">
+        <el-form-item label="用戶名">
           <el-input v-model="loginForm.username" @keyup.enter="login"></el-input>
         </el-form-item>
         <el-form-item label="密碼">
