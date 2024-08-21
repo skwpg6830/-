@@ -1,6 +1,6 @@
 <template>
   <div class="video-container">
-    <video ref="introVideo" autoplay muted>
+    <video ref="introVideo" @ended="handleVideoEnd" autoplay muted>
       <source src="@/assets/寶島宣傳影片.mp4" type="video/mp4" />
       您的瀏覽器不支援 HTML5 影片標籤。
     </video>
@@ -17,16 +17,24 @@ export default {
   setup() {
     const router = useRouter()
 
+    const handleVideoEnd = () => {
+      console.log('Video ended')
+      sessionStorage.setItem('videoPlayed', 'true')
+      window.location.reload() // 重新整理頁面
+    }
+
     const skipVideo = () => {
       const video = document.querySelector('video')
       if (video) {
         video.pause()
+        video.currentTime = 0 // 重置影片時間
       }
       sessionStorage.setItem('videoPlayed', 'true')
       window.location.reload()
     }
 
     return {
+      handleVideoEnd,
       skipVideo
     }
   }
