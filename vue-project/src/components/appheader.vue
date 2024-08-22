@@ -243,7 +243,7 @@ export default {
           headers: { Authorization: `Bearer ${token}` }
         }
 
-        const response = await axios.get('${apiBaseUrl}/appeals', config)
+        const response = await axios.get(`${apiBaseUrl}/appeals`, config)
         this.appeals = response.data
         this.showManageDialog = true
       } catch (error) {
