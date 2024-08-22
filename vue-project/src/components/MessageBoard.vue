@@ -19,7 +19,7 @@
     <el-upload
       class="upload-demo"
       drag
-      action="http://localhost:4000/api/public/upload"
+      action="${apiBaseUrl}/public/upload"
       :before-upload="handleBeforeUpload"
       :on-success="handleUploadSuccess"
       :on-error="handleUploadError"
@@ -159,6 +159,8 @@ import { UploadFilled } from '@element-plus/icons-vue'
 import femaleAvatar from '@/assets/female-avatar.png'
 import maleAvatar from '@/assets/male-avatar.png' // 根據需要替換為正確的路徑
 
+const apiBaseUrl = import.meta.env.VITE_API
+
 const message = ref({
   images: [
     // 示例圖片路徑
@@ -196,7 +198,7 @@ const replyMessage = reactive({})
 const likeMessage = async (id) => {
   try {
     await axios.post(
-      `http://localhost:4000/api/messages/${id}/like`,
+      `${apiBaseUrl}/messages/${id}/like`,
       {},
       {
         headers: {
@@ -216,7 +218,7 @@ const likeMessage = async (id) => {
 const unlikeMessage = async (id) => {
   try {
     await axios.post(
-      `http://localhost:4000/api/messages/${id}/unlike`,
+      `${apiBaseUrl}/messages/${id}/unlike`,
       {},
       {
         headers: {
@@ -235,7 +237,7 @@ const unlikeMessage = async (id) => {
 
 const fetchMessages = async () => {
   try {
-    const response = await axios.get(`http://localhost:4000/api/messages`, {
+    const response = await axios.get(`${apiBaseUrl}/messages`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
@@ -268,7 +270,7 @@ const fetchMessages = async () => {
 
 const fetchUserRole = async () => {
   try {
-    const response = await axios.get(`http://localhost:4000/api/user`, {
+    const response = await axios.get(`${apiBaseUrl}/user`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
@@ -314,7 +316,7 @@ const handleSubmit = async () => {
         images: form.images // 確保圖片路徑被包含在請求數據中
       }
 
-      const response = await axios.post('http://localhost:4000/api/messages', messageData, {
+      const response = await axios.post('${apiBaseUrl}/messages', messageData, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}` // 確保這裡有正確的 token
@@ -358,7 +360,7 @@ const handleSubmit = async () => {
 
 const deleteMessage = async (id) => {
   try {
-    const response = await axios.delete(`http://localhost:4000/api/messages/${id}`, {
+    const response = await axios.delete(`${apiBaseUrl}/messages/${id}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
@@ -376,7 +378,7 @@ const deleteMessage = async (id) => {
 const deleteReply = async (messageId, replyId) => {
   try {
     // console.log(`Deleting reply with messageId: ${messageId}, replyId: ${replyId}`)
-    await axios.delete(`http://localhost:4000/api/messages/${messageId}/replies/${replyId}`, {
+    await axios.delete(`${apiBaseUrl}/messages/${messageId}/replies/${replyId}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
@@ -415,7 +417,7 @@ const handleUploadSuccess = (response, file, fileList) => {
       if (file.path) {
         // 修正路徑为使用正斜槓以确保路徑正確
         const correctedPath = file.path.replace(/\\/g, '/')
-        // console.log('修正後的圖片路徑:', correctedPath)
+        console.log('修正後的圖片路徑:', correctedPath)
         form.images.push(correctedPath)
       } else {
         console.error('圖片路徑不存在於響應數據中:', response)
@@ -462,7 +464,7 @@ const startEditing = (id, name, messageContent, textColor) => {
 const saveEdit = async (id, newName, newMessage, newTextColor) => {
   try {
     await axios.put(
-      `http://localhost:4000/api/messages/${id}`,
+      `${apiBaseUrl}/messages/${id}`,
       { name: newName, message: newMessage, textColor: newTextColor },
       {
         headers: {
@@ -484,7 +486,7 @@ const submitReply = async (messageId) => {
     try {
       // console.log('提交回覆:', { reply })
       await axios.post(
-        `http://localhost:4000/api/messages/${messageId}/replies`,
+        `${apiBaseUrl}/messages/${messageId}/replies`,
         { reply }, // 發送的請求
         {
           headers: {

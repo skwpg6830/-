@@ -6,7 +6,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 export default defineConfig({
-  base: '/',
+  base: '/vue-project/',
   plugins: [vue()],
   resolve: {
     alias: {
@@ -19,7 +19,7 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        target: 'http://localhost:4000/api', // 替換為你的遠端伺服器地址和端口
+        target: process.env.VITE_API, // 使用環境變數
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }

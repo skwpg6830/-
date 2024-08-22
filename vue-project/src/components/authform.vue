@@ -4,6 +4,8 @@
 <script>
 import axios from 'axios'
 
+const apiBaseUrl = import.meta.env.VITE_API
+
 export default {
   data() {
     return {
@@ -32,7 +34,7 @@ export default {
 
       this.isLoading = true
       try {
-        const response = await axios.post(`http://localhost:4000/api/register`, {
+        const response = await axios.post(`${apiBaseUrl}/register`, {
           username: this.registerForm.username,
           password: this.registerForm.password,
           gender: this.registerForm.gender,
@@ -56,7 +58,7 @@ export default {
     async login() {
       this.isLoading = true
       try {
-        const response = await axios.post(`http://localhost:4000/api/login`, this.loginForm)
+        const response = await axios.post(`${apiBaseUrl}/login`, this.loginForm)
         const token = response.data.token
         localStorage.setItem('token', token)
         const decodedToken = JSON.parse(atob(token.split('.')[1]))
