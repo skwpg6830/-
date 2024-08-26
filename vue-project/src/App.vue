@@ -1,13 +1,15 @@
 <template>
   <div id="app">
-    <VideoIntro v-if="!videoPlayed" />
-    <appheader class="header" @login="handleLogin" />
-    <el-container class="container">
-      <el-main class="main-content">
-        <div class="flair flair--3"></div>
-        <maincontent />
-      </el-main>
-    </el-container>
+    <router-view v-if="!videoPlayed" />
+    <div v-else>
+      <appheader class="header" @login="handleLogin" />
+      <el-container class="container">
+        <el-main class="main-content">
+          <div class="flair flair--3"></div>
+          <maincontent />
+        </el-main>
+      </el-container>
+    </div>
   </div>
 </template>
 
@@ -16,35 +18,26 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AppHeader from './components/appheader.vue'
 import MainContent from './components/maincontent.vue'
-import VideoIntro from './views/VideoIntro.vue'
 import gsap from 'gsap'
 
 export default {
   name: 'App',
   components: {
     appheader: AppHeader,
-    maincontent: MainContent,
-    VideoIntro: VideoIntro
+    maincontent: MainContent
   },
   setup() {
     const router = useRouter()
     const videoPlayed = ref(sessionStorage.getItem('videoPlayed') === 'true')
 
     onMounted(() => {
-      if (sessionStorage.getItem('videoPlayed') === null) {
+      if (!videoPlayed.value) {
         sessionStorage.setItem('videoPlayed', 'true')
+        router.push('/video')
       }
     })
 
-    const scrollToContent = () => {
-      videoPlayed.value = true
-      const mainContent = document.querySelector('.main-content')
-      if (mainContent) {
-        mainContent.scrollIntoView({ behavior: 'smooth' })
-      }
-    }
-
-    return { videoPlayed, scrollToContent }
+    return { videoPlayed }
   },
   data() {
     return {

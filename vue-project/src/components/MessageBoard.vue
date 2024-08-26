@@ -19,11 +19,10 @@
     <el-upload
       class="upload-demo"
       drag
-      :action="`${apiBaseUrl}/public/upload`"
-      :before-upload="beforeUpload"
+      action="http://localhost:4000/api/public/upload"
+      :before-upload="handleBeforeUpload"
       :on-success="handleUploadSuccess"
       :on-error="handleUploadError"
-      :file-list="fileList"
       name="images"
       multiple
     >
@@ -160,10 +159,6 @@ import { UploadFilled } from '@element-plus/icons-vue'
 import femaleAvatar from '@/assets/female-avatar.png'
 import maleAvatar from '@/assets/male-avatar.png' // 根據需要替換為正確的路徑
 
-const apiBaseUrl = import.meta.env.VITE_API
-
-const fileList = ref([])
-
 const message = ref({
   images: [
     // 示例圖片路徑
@@ -201,7 +196,7 @@ const replyMessage = reactive({})
 const likeMessage = async (id) => {
   try {
     await axios.post(
-      `${apiBaseUrl}/messages/${id}/like`,
+      `http://localhost:4000/api/messages/${id}/like`,
       {},
       {
         headers: {
@@ -221,7 +216,7 @@ const likeMessage = async (id) => {
 const unlikeMessage = async (id) => {
   try {
     await axios.post(
-      `${apiBaseUrl}/messages/${id}/unlike`,
+      `http://localhost:4000/api/messages/${id}/unlike`,
       {},
       {
         headers: {
@@ -240,15 +235,9 @@ const unlikeMessage = async (id) => {
 
 const fetchMessages = async () => {
   try {
-    const token = localStorage.getItem('token')
-    if (!token) {
-      ElMessage.error('未登錄或登錄已過期')
-      return
-    }
-
-    const response = await axios.get(`${apiBaseUrl}/messages`, {
+    const response = await axios.get(`http://localhost:4000/api/messages`, {
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     })
     console.log(response)
@@ -279,7 +268,7 @@ const fetchMessages = async () => {
 
 const fetchUserRole = async () => {
   try {
-    const response = await axios.get(`${apiBaseUrl}/user`, {
+    const response = await axios.get(`http://localhost:4000/api/user`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
@@ -325,7 +314,7 @@ const handleSubmit = async () => {
         images: form.images // 確保圖片路徑被包含在請求數據中
       }
 
-      const response = await axios.post(`${apiBaseUrl}/messages`, messageData, {
+      const response = await axios.post('http://localhost:4000/api/messages', messageData, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}` // 確保這裡有正確的 token
@@ -369,7 +358,7 @@ const handleSubmit = async () => {
 
 const deleteMessage = async (id) => {
   try {
-    const response = await axios.delete(`${apiBaseUrl}/messages/${id}`, {
+    const response = await axios.delete(`http://localhost:4000/api/messages/${id}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
@@ -387,7 +376,7 @@ const deleteMessage = async (id) => {
 const deleteReply = async (messageId, replyId) => {
   try {
     // console.log(`Deleting reply with messageId: ${messageId}, replyId: ${replyId}`)
-    await axios.delete(`${apiBaseUrl}/messages/${messageId}/replies/${replyId}`, {
+    await axios.delete(`http://localhost:4000/api/messages/${messageId}/replies/${replyId}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
@@ -401,11 +390,10 @@ const deleteReply = async (messageId, replyId) => {
   }
 }
 
-const isLoggedIn = ref(false) // 假設有一個變數來檢查用戶是否已登入
-
 // 上傳相關的處理
-const backgroundeforeUpload = (file) => {
-  if (!isLoggedIn.value) {
+const handleBeforeUpload = (file) => {
+  const token = localStorage.getItem('token') // 假設 token 存儲在 localStorage 中
+  if (!token) {
     ElMessage.error('請先登入再上傳文件')
     return false
   }
@@ -424,9 +412,11 @@ const handleUploadSuccess = (response, file, fileList) => {
   // 確保 response.files 存在並且是數組
   if (response.files && Array.isArray(response.files)) {
     response.files.forEach((file) => {
-      if (file.url) {
-        console.log('圖片 URL:', file.url)
-        form.images.push(file.url)
+      if (file.path) {
+        // 修正路徑为使用正斜槓以确保路徑正確
+        const correctedPath = file.path.replace(/\\/g, '/')
+        // console.log('修正後的圖片路徑:', correctedPath)
+        form.images.push(correctedPath)
       } else {
         console.error('圖片路徑不存在於響應數據中:', response)
       }
@@ -472,7 +462,7 @@ const startEditing = (id, name, messageContent, textColor) => {
 const saveEdit = async (id, newName, newMessage, newTextColor) => {
   try {
     await axios.put(
-      `${apiBaseUrl}/messages/${id}`,
+      `http://localhost:4000/api/messages/${id}`,
       { name: newName, message: newMessage, textColor: newTextColor },
       {
         headers: {

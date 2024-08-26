@@ -8,10 +8,9 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 const app = createApp(App)
 
-// 移除導航守衛，確保所有導航都指向根路徑
 router.beforeEach((to, from, next) => {
-  if (to.path !== '/') {
-    next('/')
+  if (to.path === '/' && from.path !== '/video') {
+    next('/video')
   } else {
     next()
   }

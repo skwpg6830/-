@@ -30,8 +30,6 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 
-const apiBaseUrl = import.meta.env.VITE_API
-
 export default {
   name: 'Appeal',
   data() {
@@ -66,7 +64,7 @@ export default {
           }
 
           const response = await axios.post(
-            '${apiBaseUrl}/appeals',
+            'http://localhost:4000/api/appeals',
             {
               appealType: this.appealForm.appealType,
               report: this.appealForm.report,

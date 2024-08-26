@@ -118,8 +118,6 @@ import { ElAvatar, ElMessage } from 'element-plus'
 import maleAvatar from '../assets/male-avatar.png'
 import femaleAvatar from '../assets/female-avatar.png'
 
-const apiBaseUrl = import.meta.env.VITE_API
-
 export default {
   name: 'AppHeader',
   components: {
@@ -169,7 +167,7 @@ export default {
         return
       }
       try {
-        await axios.post(`${apiBaseUrl}/register`, {
+        await axios.post(`http://localhost:4000/api/register`, {
           username: this.registerForm.username,
           password: this.registerForm.password,
           gender: this.registerForm.gender,
@@ -200,7 +198,7 @@ export default {
     },
     async login() {
       try {
-        const response = await axios.post(`${apiBaseUrl}/login`, {
+        const response = await axios.post(`http://localhost:4000/api/login`, {
           username: this.loginForm.username,
           password: this.loginForm.password
         })
@@ -243,7 +241,7 @@ export default {
           headers: { Authorization: `Bearer ${token}` }
         }
 
-        const response = await axios.get(`${apiBaseUrl}/appeals`, config)
+        const response = await axios.get('http://localhost:4000/api/appeals', config)
         this.appeals = response.data
         this.showManageDialog = true
       } catch (error) {
@@ -262,7 +260,7 @@ export default {
           headers: { Authorization: `Bearer ${token}` }
         }
 
-        await axios.delete(`${apiBaseUrl}/appeals/${id}`, config)
+        await axios.delete(`http://localhost:4000/api/appeals/${id}`, config)
         this.appeals = this.appeals.filter((appeal) => appeal._id !== id)
         ElMessage.success('申訴已刪除')
       } catch (error) {
